@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns="urn:geniac:service" name="dummy" version="1.0.0" base-path="/0.1.0" host="http://localhost:8080" schemes="http" consumes="text/plain" produces="application/json">
+	<engine runner="urn:katana:runner:ruby2" path="../action/dummy.rb" tcp="7001">
+       <variable name="interpreter" value="ruby" />
+       <variable name="workers" value="5" />
+    </engine>
+  	<action name="dummy" http-method="GET" http-path="/dummy" collection="true">
+    	<param http-input="path" name="id" required="true" />
+    	<response code="200" description="dummy service" />
+  	</action>
+</service>
