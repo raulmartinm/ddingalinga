@@ -1,5 +1,5 @@
 
-# Base exception for GENIAC errors.
+# Base exception for KATANA errors.
 class KatanaError < StandardError
 end
 

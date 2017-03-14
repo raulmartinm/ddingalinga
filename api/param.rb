@@ -3,48 +3,90 @@ require_relative '../logging'
 
 ##
 # Parameter class for API.
-
+#
 # A Param object represents a parameter received for an action in a call
 # to a Service component.
-
+#
 class Param
 
+=begin
+
+	https://en.wikibooks.org/wiki/Ruby_Programming/Data_types
+
+	h = {"hash?" => "yep, it\'s a hash!", "the answer to everything" => 42, :linux => "fun for coders."}
+	1.-  puts "Stringy string McString!".class
+	2.-  puts 1.class
+	3.-  puts 1.class.superclass
+	4.-  puts 1.class.superclass.superclass
+	5.-  puts 4.3.class
+	6.-  puts 4.3.class.superclass
+	7.-  puts nil.class
+	8.-  puts h.class
+	9.-  puts :symbol.class
+	10.- puts [].class
+	11.- puts (1..8).class
+	12.- puts flase.class
+	13.- puts true.class
+
+	1.-  String
+	2.-  Fixnum
+	3.-  Integer
+	4.-  Numeric
+	5.-  Float
+	6.-  Numeric
+	7.-  NilClass
+	8.-  Hash
+	9.-  Symbol
+	10.- Array
+	11.- Range
+	12.- FalseClass
+	13.- TrueClass
+
+=end
+
 	# Supported parameter types
-	TYPE_NULL = 'null'
-	TYPE_BOOLEAN = 'boolean'
-	TYPE_INTEGER = 'integer'
-	TYPE_FLOAT = 'float'
-	TYPE_ARRAY = 'array'
-	TYPE_OBJECT = 'object'
-	TYPE_STRING = 'string'
+	TYPE_NULL = "null"
+	TYPE_BOOLEAN = "boolean"
+	TYPE_INTEGER = "integer"
+	TYPE_FLOAT = "float"
+	TYPE_ARRAY = "array"
+	TYPE_OBJECT = "object"
+	TYPE_STRING = "string"
 
+	# Type data in ruby
+	NAME_CLASS_NIL = "NilClass"
+	NAME_CLASS_TRUE = "TrueClass"
+	NAME_CLASS_FALSE = "FalseClass"
+	NAME_CLASS_STRING = "String"
+	NAME_CLASS_NUMERIC = "Numeric"
+	NAME_CLASS_FIXNUM = "Fixnum"
+	NAME_CLASS_INTEGER = "Integer"
+	NAME_CLASS_FLOAT = "Float"
+	NAME_CLASS_ARRAY = "Array"
+	NAME_CLASS_HASH = "Hash"
+	NAME_CLASS_RANGE = "Range"
+	NAME_CLASS_SYMBOL = "Symbol"
+	NAME_CLASS_OBJECT = "Object"
 
-	# Supported parameter locations
-	LOC_PATH = 'path'
-	LOC_QUERY = 'query'
-	LOC_FORM = 'form-data'
-	LOC_HEADER = 'header'
-	LOC_BODY = 'body'
-	LOCATIONS  = [LOC_PATH, LOC_QUERY, LOC_HEADER, LOC_BODY]
+	# Mapping native types to schema types.
+	TYPE_CLASSES = {
+		NAME_CLASS_NIL => TYPE_NULL,
+		NAME_CLASS_TRUE => TYPE_BOOLEAN,
+		NAME_CLASS_FALSE => TYPE_BOOLEAN,
+		NAME_CLASS_STRING => TYPE_STRING,
+		NAME_CLASS_FIXNUM => TYPE_INTEGER,
+		NAME_CLASS_INTEGER => TYPE_INTEGER,
+		NAME_CLASS_FLOAT => TYPE_FLOAT,
+		NAME_CLASS_ARRAY => TYPE_ARRAY,
+		NAME_CLASS_RANGE => TYPE_ARRAY,
+		NAME_CLASS_HASH => TYPE_OBJECT,
+	}
 
-	def initialize(location, name, value = '', type = nil, exists=false)
-		if not LOCATIONS.include? location
-          raise TypeError.new("Unknown location value")
-        end
-
-		@location = location 	# The location of the parameter in the request, which MAY be "path", "query", "form-data", "header" or "body"
-		@name = name			# The name of the parameter 
-		@value = value			# The value of the variable, which MAY be converted from the configuration based on the given type value, or null if the variable for the given name does not exist
-		@type = type 			# The data type of the variable, which MAY be "null", "boolean", "integer", "float", "string", "array" or "object"
-		@exists = exists 		# Determines if the parameter was provided in the request
-	end
-
-	# Get location where parameter was defined.
-	#
-	# rtype: str
-	#
-	def get_location
-		return @location
+	def initialize(name, value="", type=TYPE_STRING, exists=false)		
+		@name = name
+		@value = value
+		@type = type || resolve_type(value) 
+		@exists = exists
 	end
 
 	# Get aprameter name.
@@ -67,38 +109,32 @@ class Param
 	#
 	# Value is returned using the parameter data type for casting.
 	# returns: The parameter value.
-    # rtype: mixed
+	# rtype: mixed
 	#
 	def get_value
 		return @value
 		# error_msg = 'Param "#{@name}" value is not a #{@type}'
 		# error_msg1 = 'Param "%s" value is not a %s' % [@name,@type]
 		# Loggging.log.debug error_msg1
-
-		#  PHYTON IMPLEMENTATION
- 		# name = self.get_name()
-        # type_ = self.get_type()
-        # error_msg = 'Param "{}" value is not a {}'.format(name, type_)
-        # try:
-        #     value = self.__value
-        #     if type_ == 'string':
-        #         value = '"{}"'.format(value)
-
-        #     value = json.deserialize(value)
-        # except:
-        #     LOG.error('Param "%s" is not %s: %s', name, type_, value)
-        #     raise TypeError(error_msg)
-
-        # if not isinstance(value, TYPE_CLASSES[type_]):
-        #     raise TypeError(error_msg)
-
-        # return value
 	end
 
 	# Check if parameter exists.
 	def exists
 		return @exists
 	end
+
+	# Converts native types to schema types.
+	#
+    # :param value: The value to analyze.
+    # :type value: mixed
+    #
+    # :rtype: str
+    #
+	def resolve_type(value)
+		# Resolve standard mapped ruby types
+        return TYPE_CLASSES[value.class.name] || TYPE_OBJECT
+    end
+
 
 	def to_s
 		"(location:#@location,\n

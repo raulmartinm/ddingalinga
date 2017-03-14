@@ -2,11 +2,13 @@ require_relative '../errors'
 require_relative '../logging'
 
 # Exception class for API errors.
+#
 class ApiError < KatanaError
 end
 
-##
+
 # Base API class for SDK components.
+#
 class Api
 	
 	def initialize(component, path, name, version, framework_version, variables=nil, debug=false)
@@ -27,6 +29,7 @@ class Api
 	#
 	# returns: Source path file.
 	# rtype: string
+	#
 	def get_path
 		return @path
 	end
@@ -34,6 +37,7 @@ class Api
 	# Get component name.
 	#
 	# rtype: string
+	#
 	def get_name
 		return @name
 	end
@@ -41,6 +45,7 @@ class Api
 	# Get component version.
 	#	
 	# rtype: string
+	#
 	def get_version
 		return @version
 	end
@@ -48,6 +53,7 @@ class Api
 	# Get KATANA framework version.
 	#	
 	# rtype: string
+	#
 	def get_framework_version
 		return @framework_version
 	end
@@ -55,6 +61,7 @@ class Api
 	# Get KATANA platform version.
 	#	
 	# rtype: hash or dict
+	#
 	def get_variables
 		return @variables
 	end
@@ -63,6 +70,7 @@ class Api
 	#	
 	# :param name: Variable name.
     # :type name: str
+    #
 	def get_variable(key)
 		return @variables[key] if @variables
     end
@@ -70,6 +78,7 @@ class Api
 	# Gets all component variables.
 	#	
 	# rtype: hash or dict
+	#
 	def is_debug
 		return @debug
 	end
@@ -80,6 +89,7 @@ class Api
     # :type name: str
     #
     # :rtype: bool
+    #
     def has_resource()
         return @component.has_resource(name)
     end
@@ -92,6 +102,7 @@ class Api
     # :raises: ComponentError
     #
     # :rtype: object
+    #
 	def get_resource()
         return @component.get_resource(name)
 	end
@@ -99,6 +110,7 @@ class Api
 	# Get service names and versions.
 	#
     # :rtype: list
+    #
 	def get_services()
         services = []
         for name in self._schema.get_service_names():
@@ -121,6 +133,7 @@ class Api
     # :raises: ApiError
 	# 
     # :rtype: ServiceSchema
+    #
     def get_service_schema(name, version)
         # Resolve service version when wildcards are used
         if '*' in version:
