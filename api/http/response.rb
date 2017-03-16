@@ -1,5 +1,17 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
 
 # HTTP response class.
+#
 class HttpResponse
 
     def initialize(status_code, status_text)
@@ -27,6 +39,7 @@ class HttpResponse
     # :type version: str
     #
     # :rtype: bool
+    #
     def is_protocol_version(version)
         # return self.__protocol_version == version
     end
@@ -34,6 +47,7 @@ class HttpResponse
 	# Get the HTTP version.
 	#
     # :rtype: str
+    #
     def get_protocol_version
         # return self.__protocol_version
      end
@@ -48,6 +62,7 @@ class HttpResponse
     # :type version: str
     #
     # :rtype: HttpResponse
+    #
     def set_protocol_version(version)
         #self.__protocol_version = version or '1.1'
         #return self
@@ -59,6 +74,7 @@ class HttpResponse
     # :type status: str
     #
     # :rtype: bool
+    #
     def is_status(status)
         # return self.__status == status
     end
@@ -66,6 +82,7 @@ class HttpResponse
     # Get the HTTP status.
     # 
     # :rtype: str
+    #
     def get_status
         # return self.__status
     end
@@ -74,6 +91,7 @@ class HttpResponse
 	# Get HTTP status code.
 	#
     # :rtype: int
+    #
     def get_status_code
         # return self.__status_code
     end
@@ -82,6 +100,7 @@ class HttpResponse
 	# Get HTTP status text.
 	#
     # :rtype: str
+    #
     def get_status_text
         #return self.__status_text
     end
@@ -98,6 +117,7 @@ class HttpResponse
     # :type text: str
     #
     # :rtype: HttpResponse
+    #
     def set_status(code, text)
 =begin
         self.__status_code = code
@@ -113,6 +133,7 @@ class HttpResponse
     # :type name: str
     # 
     # :rtype: bool
+    #
     def has_header(name)
         # return name in self.__headers
     end
@@ -123,6 +144,7 @@ class HttpResponse
     # :type name: str
     #
     # :rtype: str
+    #
     def get_header(name)
         # self.__headers.get(name)
     end
@@ -131,6 +153,7 @@ class HttpResponse
 	# Get all HTTP header.
 	#
     # :rtype: `MultiDict`
+    #
     def get_headers
         # return self.__headers
     end
@@ -146,6 +169,7 @@ class HttpResponse
     # :type value: str
     #
     # :rtype: HttpResponse
+    #
     def set_header(name, value)
         #self.__headers[name] = value
         #return self
@@ -156,6 +180,7 @@ class HttpResponse
     # Returns True if the HTTP response body has content, otherwise False.
     #
     # :rtype: bool
+    #
     def has_body
         # return self.__body != ''
     end
@@ -164,6 +189,7 @@ class HttpResponse
     #
     # :returns: The HTTP response body.
     # :rtype: str
+    #
     def get_body
         # return self.__body
     end
@@ -177,10 +203,10 @@ class HttpResponse
     # :type content: str
     #
     # :rtype: HttpResponse
+    #
     def set_body(content=nil)
         #self.__body = content or ''
         #return self
-
-     nil
+    end
 
 end

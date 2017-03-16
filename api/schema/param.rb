@@ -1,5 +1,18 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
+
 require_relative '../../logging'
 require_relative '../../payload'
+require_relative '../../json'
 
 # Parameter schema in the platform.
 #
@@ -7,13 +20,14 @@ class ParamSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = Payload(payload)
+        @payload = payload
     end
 
     
     # Get parameter name.
     #
     # :rtype: str
+    #
     def get_name
         return @name
     end
@@ -21,15 +35,17 @@ class ParamSchema
     # Get parameter value type.
     #
     # :rtype: str
+    #
     def get_type
-        # return @payload.get('type', 'string')
+        return @payload.get_path("type"){"string"}
     end
 
     # Get parameter value format.
     #
     # :rtype: str
+    #
     def get_format
-        # return @payload.get('format', '')
+        return @payload.get_path("format"){""}
     end
 
     
@@ -44,43 +60,49 @@ class ParamSchema
     #         values for a single instance.
     # 
     # :rtype: str
+    #
     def get_array_format
-        # return @payload.get('array_format', 'csv')
+        return @payload.get('array_format', 'csv')
     end
 
     # Get ECMA 262 compliant regular expression to validate the parameter.
     #
     # :rtype: str
+    #
     def get_pattern
-        # return @payload.get('pattern', '')
+        return @payload.get_path("pattern"){""}
     end
 
     # Check if the parameter allows an empty value.
     #
     # :rtype: bool
+    #
     def allow_empty
-        # return @payload.get('allow_empty', False)
+        return @payload.get_path("allow_empty"){false}
     end
 
     # Check if the parameter has a default value defined.
     #
     # :rtype: bool
+    #
     def has_default_value
-        # return @payload.path_exists('default')
+        return @payload.path_exists("default")
     end
 
     # Get default value for parameter.
     #
     # :rtype: str
+    #
     def get_default_value
-        # return @payload.get('default', '')
+        return @payload.get_path("default"){""} 
     end
 
     # Check if parameter is required.
     #
     # :rtype: bool
+    #
     def is_required
-        # return @payload.get('required', False)
+        return @payload.get_path("required"){false}
     end
 
     # Get JSON items defined for the parameter.
@@ -88,6 +110,7 @@ class ParamSchema
     # An empty string is returned when parameter type is not "array".
     #
     # :rtype: list
+    #
     def get_items
 =begin        
         if self.get_type() != 'array':
@@ -109,8 +132,9 @@ class ParamSchema
     # Get maximum value for parameter.
     #
     # :rtype: int
+    #
     def get_max
-        # return @payload.get('maximum', sys.maxsize)
+        return @payload.get_path("maximum"){10000} # sys.maxsize
     end
 
     # Check if max value is inclusive.
@@ -118,20 +142,21 @@ class ParamSchema
     # When max is not defined inclusive is False.
     #
     # :rtype: bool
+    #
     def is_exclusive_max
-=begin
-        if not @payload.path_exists('maximum'):
-            return False
+        if !@payload.path_exists("maximum")
+            return false
+        end
 
-        return @payload.get('exclusive_maximum', False)
-=end
+        return @payload.get_path("exclusive_maximum"){false}
     end
 
     # Get minimum value for parameter.
     # 
     # :rtype: int
+    #
     def get_min
-        # return @payload.get('maximum', -sys.maxsize - 1)
+        return @payload.get_path("maximum"){-10001} # -sys.maxsize - 1
     end
 
     
@@ -140,13 +165,12 @@ class ParamSchema
     # When min is not defined inclusive is False.
     #
     # :rtype: bool
+    #
     def is_exclusive_min
-=begin
         if not @payload.path_exists('minimum'):
             return False
 
-        return @payload.get('exclusive_minimum', False)
-=end
+        return @payload.get_path("exclusive_minimum"){false}
     end
 
     
@@ -156,7 +180,7 @@ class ParamSchema
     # 
     # :rtype: int
     def get_max_length
-        # return @payload.get('maximum_length', -1)
+        return @payload.get_path("maximum_length"){-1}
     end
 
     
@@ -165,8 +189,9 @@ class ParamSchema
     # result is -1 when this values is not defined.
     #
     # :rtype: int
+    #
     def get_min_length
-        # return @payload.get('minimum_length', -1)
+        return @payload.get_path("minimum_length"){-1}
     end
 
     
@@ -175,13 +200,13 @@ class ParamSchema
     # Result is -1 when type is not "array" or values is not defined.
     # 
     # :rtype: int
+    #
     def get_max_items
-=begin        
-        if self.get_type() != 'array':
+        if self.get_type() != "array"
             return -1
+        end
 
-        return @payload.get('maximum_items', -1)
-=end
+        return @payload.get_path("maximum_items"){-1}
     end
 
     
@@ -190,37 +215,38 @@ class ParamSchema
     # Result is -1 when type is not "array" or values is not defined.
     # 
     # :rtype: int
+    #
     def get_min_items
-=begin
-        if self.get_type() != 'array':
+        if self.get_type() != "array"
             return -1
+        end
 
-        return @payload.get('minimum_items', -1)
-=end
+        return @payload.get_path("minimum_items"){-1}
     end
 
     # Check if param must contain a set of unique items.
     #
     # :rtype: bool
+    #
     def has_unique_items
-        #return @payload.get('unique_items', False)
+        return @payload.get_path("unique_items"){false}
     end
 
     # Get the set of unique values that parameter allows.
     #
     # :rtype: list
+    #
     def get_enum
-=begin
-        if not @payload.path_exists('enum'):
-            return ''
+        if !@payload.path_exists('enum')
+            return ""
+        end
 
         try:
             # Items must be a valid JSON string
-            return json.loads(@payload.get('enum'))
+            return json.loads(@payload.get_path("enum"))
         except:
-            LOG.exception('Value for "enum" is not valid JSON')
-            return ''
-=end
+            Loggging.log.debug "Value for 'enum' is not valid JSON"
+            return ""
     end
 
     
@@ -229,15 +255,17 @@ class ParamSchema
     # Result is -1 when this property is not defined.
     #
     # :rtype: int
+    #
     def get_multiple_of
-        # return @payload.get('multiple_of', -1)
+        return @payload.get_path("multiple_of"){-1}
     end
 
     # Get HTTP param schema.
     #
     # :rtype: HttpParamSchema
+    #
     def get_http_schema
-        # return HttpParamSchema(self.get_name(), @payload.get('http', {}))
+        return HttpParamSchema.new (self.get_name(), @payload.get_path("http"){{}})
     end
 
 # HTTP semantics of a parameter schema in the platform.
@@ -245,29 +273,33 @@ class ParamSchema
 class HttpParamSchema
 
 
-    def __init__(name, payload)
+    def initialize(name, payload)
         @name = name
-        @payload = Payload(payload)
+        @payload = Payload.new
+        @payload.set_data(payload)
     end
 
     # Check if the Gateway has access to the parameter.
     # 
     # :rtype: bool
+    #
     def is_accessible
-        # return @payload.get('gateway', True)
+        return @payload.get_path("gateway"){true}
     end
 
     
     # Get location of the parameter.
     #
     # :rtype: str
+    #
     def get_input
-        # return @payload.get('input', 'query')
+        return @payload.get_path("input"){"query"}
     end
 
     # Get name as specified via HTTP to be mapped to the name property.
     #
     # :rtype: str
+    #
     def get_param
-        # return @payload.get('param', self.__name)
+        return @payload.get_path("param"){@name}
     end

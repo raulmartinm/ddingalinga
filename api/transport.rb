@@ -1,3 +1,14 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
 
 class Transport
 
@@ -9,15 +20,17 @@ class Transport
 	#
 	# Returns the request ID of the Transport.
 	#
-    #:returns: The request ID.
-    #:rtype: str
+    # :returns: The request ID.
+    # :rtype: str
+    #
 	def get_request_id
 		return @transport.get_path("meta","id")
 	end
 
 	# Get request timestamp.
 	#
-	#:rtype: str
+	# :rtype: str
+    #
 	def get_request_timestamp
 		return @transport.get_path("meta","datetime")
 	end
@@ -26,7 +39,8 @@ class Transport
 	#
 	# Origin is a tuple with origin name and version.
 	#
-	#:rtype: list
+	# :rtype: list
+    #
 	def get_origin
 		return @transport.get_path("meta","origin")
 	end
@@ -34,13 +48,13 @@ class Transport
 
 	# Get a userland property.
 	#
+	# :param name: Name of the property.
+    # :type name: str
+    # :param default: A default value to return when property is missing.
+    # :type default: str
 	#
-	#:param name: Name of the property.
-    #:type name: str
-    #:param default: A default value to return when property is missing.
-    #:type default: str
-	#
-	#:rtype: str
+	# :rtype: str
+    #	
 	def get_property(name, default= "")
 		return @transport.get_path("meta","properties", name) { default }
 	end
@@ -49,7 +63,8 @@ class Transport
 	#
 	# Returns True if a download has been registered, otherwise False.
 	#
-	#:rtype: bool
+	# :rtype: bool
+    #
 	def has_download
 	end
 
@@ -57,8 +72,9 @@ class Transport
 	#
 	# Return the download from the Transport as a File object.
 	#
-	#:returns: The File object.
-    #:rtype: `File`
+	# :returns: The File object.
+    # :rtype: `File`
+    #
 	def get_download
 	end
 
@@ -76,6 +92,7 @@ class Transport
 
     # :returns: The Transport data.
     # :rtype: object	
+	#
 	def get_data(service, version, action)
 		return @transport.get_path("data",service, version, action)
 	end
@@ -91,6 +108,7 @@ class Transport
 
     # :returns: The relations from the Transport.
     # :rtype: object
+	#
 	def get_relations(service)
 		return @transport.get_path("relations",service)
 	end
@@ -107,6 +125,7 @@ class Transport
 	# 
     # :returns: The links from the Transport.
     # :rtype: object
+    # 
 	def get_links(service)
 		return @transport.get_path("links",service)
 	end
@@ -122,6 +141,7 @@ class Transport
     # 
     # :returns: The calls from the Transport.
     # :rtype: object
+    #
 	def get_calls(service)
 		return @transport.get_path("calls",service)
 	end
@@ -139,6 +159,7 @@ class Transport
 	# 
     # :returns: The transactions from the Transport.
     # :rtype: object
+    #
 	def get_transactions(service)
 		return @transport.get_path("transactions",service)
 	end
@@ -154,6 +175,7 @@ class Transport
 	# 
     # :returns: The errors from the Transport.
     # :rtype: object
+    #
 	def get_errors(service)
 		return @transport.get_path("errors",service)
 	end

@@ -1,5 +1,25 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
+
 require_relative '../../logging'
 require_relative '../../payload'
+require_relative 'error'
+require_relative 'param'
+
+
+# Error class for schema action errors.
+#
+class ActionSchemaError < ServiceSchemaError
+end
 
 # Action schema in the platform.
 #
@@ -8,45 +28,50 @@ class ActionSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = Payload(payload)
-        @params = @payload.get('params', {})
-        @files = @payload.get('files', {})
+        @payload = payload
+        @params = @payload.get_path("params"){{}}
+        @files = @payload.get_path("files"){{}}
     end
 
     # Check if action has been deprecated.
     #
     # :rtype: bool
+    #
     def is_deprecated
-        # return @payload.get('deprecated', False)
+        return @payload.get_path("deprecated"){false}
     end
 
     # Check if the action returns a collection of entities.
     #
     # :rtype: bool
+    #
     def is_collection
-        # return @payload.get('collection', False)
+        return @payload.get_path("collection"){false}
     end
 
     # Get action name.
     #
     # :rtype: str
+    #
     def get_name
-        # return @name
+        return @name
     end
 
     # Get path to the entity.
     # 
     # :rtype: str
+    #
     def get_entity_path
-        # return @payload.get('entity_path', '')
+        return @payload.get_path("entity_path"){""}
     end
 
     
     # Get delimiter to use for the entity path.
     #
     # :rtype: str
+    #
     def get_path_delimiter
-        # return @payload.get('path_delimiter', '/')
+        return @payload.get_path("path_delimiter"){"/"}
     end
 
     # Get primary key field name.
@@ -55,8 +80,9 @@ class ActionSchema
     # contains the primary key.
     #
     # :rtype: str
+    #
     def get_primary_key
-        # return @payload.get('primary_key', 'id')
+        return @payload.get_path("primary_key"){"id"}
     end
 
     
@@ -69,6 +95,7 @@ class ActionSchema
     # :type data: dict
     #
     # :rtype: dict
+    #
     def resolve_entity(data)
 =begin
         path = self.get_entity_path()
@@ -87,8 +114,9 @@ class ActionSchema
     # Check if an entity definition exists for the action.
     #
     # :rtype: bool
+    #
     def has_entity_definition
-        # return @payload.path_exists('entity')
+        return @payload.path_exists("entity")
     end
 
     # Get the entity definition as an object.
@@ -97,15 +125,17 @@ class ActionSchema
     # type as a string or an object with fields.
     #
     # :rtype: object
+    #
     def get_entity
-        # return @payload.get('entity', {})
+        return @payload.get("entity"){{}}
     end
 
     # Check if any relations exists for the action.
     #
     # :rtype: bool
+    #
     def has_relations
-        # return @payload.path_exists('relation')
+        return @payload.path_exists("relation")
     end
 
     # Get action relations.
@@ -115,15 +145,17 @@ class ActionSchema
     # setting as a boolean value.
     #
     # :rtype: list
+    #
     def get_relations
-        # return @payload.get('relation', [])
+        return @payload.get_path("relation"){[]}
     end
 
     # Get the parameters names defined for the action.
     #
     # :rtype: list
+    #
     def get_params
-        # return @params.keys()
+        return @params.keys()
     end
 
     
@@ -133,8 +165,9 @@ class ActionSchema
     # :type name: str
     #
     # :rtype: bool
+    #
     def has_param(name)
-        # return name in @params
+        return !@params[name].nil?
     end
 
     # Get schema for a parameter.
@@ -143,19 +176,20 @@ class ActionSchema
     # :type name: str
     #
     # :rtype: ParamSchema
+    #
     def get_param_schema(name)
-=begin
-        if not self.has_param(name):
-            error = 'Cannot resolve schema for parameter: {}'
-            raise ActionSchemaError(error.format(name))
+        if not self.has_param(name)
+            error = "Cannot resolve schema for parameter: #{name}"
+            raise ActionSchemaError.new (error)
+        end
 
-        return ParamSchema(name, @params[name])
-=end
+        return ParamSchema.new (name, @params[name])
     end
 
     # Get the file parameter names defined for the action.
     #
     # :rtype: list
+    #
     def get_files
         # return @files.keys()
     end
@@ -166,6 +200,7 @@ class ActionSchema
     # :type name: str
     #
     # :rtype: bool
+    #
     def has_file(name)
         # return name in @files
     end
@@ -176,6 +211,7 @@ class ActionSchema
     # :type name: str
     #
     # :rtype: FileSchema
+    #
     def get_file_schema(name)
 =begin        
         if not self.has_file(name):
@@ -190,8 +226,9 @@ class ActionSchema
     # Get HTTP action schema.
     #
     # :rtype: HttpActionSchema
+    #
     def get_http_schema
-        #return HttpActionSchema(@payload.get('http', {}))
+        return HttpActionSchema.new (@payload.get_path("http"){{}})
     end
 
 end
@@ -202,36 +239,41 @@ class HttpActionSchema
  
 
     def initialize(payload)
-        @payload = Payload(payload)
+        @payload = Payload.new
+        @payload.set_data(payload)
     end
 
     # Check if the Gateway has access to the action.
     #
     # :rtype: bool
+    #
     def is_accessible
-        # return @payload.get('gateway', True)
+        return @payload.get_path("gateway"){true}
     end
 
     # Get HTTP method for the action.
     #
     # :rtype: str
+    #
     def get_method        
-        # return @payload.get('method', 'get')
+        return @payload.get_path("method"){"get"}
     end
 
     
     # Get URL path for the action.
     # 
     # :rtype: str
+    #
     def get_path
-        # return @payload.get('path', '')
+        return @payload.get_path("path"){""}
     end
 
     # Get default location of parameters for the action.
     #
     # :rtype: str
+    #
     def get_input
-       # return @payload.get('input', 'query')
+        return @payload.get_path("input"){"query"}
     end
 
     # Get expected MIME type of the HTTP request body.
@@ -239,7 +281,8 @@ class HttpActionSchema
     # Result may contain a comma separated list of MIME types.
     #
     # :rtype: str
+    #
     def get_body
-        # return ','.join(@payload.get('body', ['text/plain']))
+        return (@payload.get_path("body"){['text/plain']}).join(",")
     end
 end

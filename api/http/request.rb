@@ -1,5 +1,17 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
 
 # HTTP request class.
+#
 class HttpRequest
 	def initialize(method, url)
 		@method = method
@@ -23,6 +35,7 @@ class HttpRequest
     # :type method: str
     # 
     # :rtype: bool
+    #
 	def is_method
 	end
 
@@ -33,6 +46,7 @@ class HttpRequest
     # 
     # :returns: The HTTP method.
     # :rtype: str
+    #
 	def get_method
 		return @method
 	end
@@ -40,6 +54,7 @@ class HttpRequest
 	# Get request URL.
 	# 
     # :rtype: str
+    #
 	def get_url
 		return @url
 	end
@@ -47,6 +62,7 @@ class HttpRequest
 	# Get request URL scheme.
 	# 
     # :rtype: str
+    #
 	def get_url_scheme
 	end
 
@@ -56,12 +72,14 @@ class HttpRequest
     # When a port is given in the URL it will be added to host.
     # 
     # :rtype: str
+    #
 	def get_url_host
 	end
 
 	# Get request URL path.
 	#
 	# rtype: str
+    #
     def get_url_path
         # return self.__parsed_url.path.rstrip('/')
     end
@@ -76,6 +94,7 @@ class HttpRequest
     # :type name: str
 	#
     # :rtype: bool
+    #
     def has_query_param(name)
         # return name in self.__query
     end
@@ -93,6 +112,7 @@ class HttpRequest
     #
     # :returns: The HTTP param value.
     # :rtype: str
+    #
     def get_query_param(name, default="")
         # return self.__query.get(name, (default, ))[0]
     end
@@ -109,6 +129,7 @@ class HttpRequest
     # 
     # :returns: The HTTP param values as a list.
     # :rtype: list
+    #
     def get_query_param_array(self, name, default=nil)
         #return self.__query.get(name, default or [])
     end
@@ -117,6 +138,7 @@ class HttpRequest
 	# 
     # :returns: The HTTP params.
     # :rtype: dict
+    #
     def get_query_params
         #return {key: value[0] for key, value in self.__query.items()}
     end
@@ -128,6 +150,7 @@ class HttpRequest
     #
     # :returns: The HTTP params.
     # :rtype: `MultiDict`
+    #
     def get_query_params_array
         # return self.__query
     end
@@ -141,6 +164,7 @@ class HttpRequest
     # :type name: str
     #
     # :rtype: bool
+    #
     def has_post_param(name)
         #return name in self.__post_data
     end
@@ -158,6 +182,7 @@ class HttpRequest
     # 
     # :returns: The HTTP param.
     # :rtype: str
+    #
     def get_post_param(name, default="")
         # return self.__post_data.get(name, (default, ))[0]
     end
@@ -174,6 +199,7 @@ class HttpRequest
     #
     # :returns: The HTTP param values as a list.
     # :rtype: list
+    #
     def get_post_param_array(self, name, default=nil)
         #return self.__post_data.get(name, default or [])
     end
@@ -182,6 +208,7 @@ class HttpRequest
 	#
     # :returns: The HTTP post params.
     # :rtype: dict
+    #
     def get_post_params
         # return {key: value[0] for key, value in self.__post_data.items()}
     end
@@ -192,6 +219,7 @@ class HttpRequest
     #
     # :returns: The HTTP post params.
     # :rtype: `MultiDict`
+    #
     def get_post_params_array
         # return self.__post_data
     end
@@ -206,6 +234,7 @@ class HttpRequest
     # :type version: str
 	#
     # :rtype: bool
+    #
     def is_protocol_version(version)
         # return self.__protocol_version == version
     end
@@ -216,6 +245,7 @@ class HttpRequest
     # 
     # :returns: The HTTP version.
     # :rtype: str
+    #
     def get_protocol_version
         # return self.__protocol_version
     end
@@ -229,6 +259,7 @@ class HttpRequest
     # :type name: str
     # 
     # :rtype: bool
+    #
     def has_header(name)
         # return name in self.__headers
     end
@@ -247,6 +278,7 @@ class HttpRequest
 	#
     # :returns: The HTTP header value.
     # :rtype: str
+    #
     def get_header(name, default="")
 
 =begin
@@ -262,6 +294,7 @@ class HttpRequest
     #
     # :returns: The HTTP headers.
     # :rtype: `MultiDict`
+    #
     def get_headers
         # return self.__headers
     end
@@ -271,6 +304,7 @@ class HttpRequest
     # Returns True if the HTTP request body has content, otherwise False.
     #
     # :rtype: bool
+    #
     def has_body
         # return self.__body != ''
     end
@@ -282,6 +316,7 @@ class HttpRequest
 	#
     # :returns: The HTTP request body.
     # :rtype: str
+    #
     def get_body
         # return self.__body
     end
@@ -292,6 +327,7 @@ class HttpRequest
     # :type name: str
     #
     # :rtype: bool
+    #
     def has_file(name)
         #return name in self.__files
     end
@@ -306,6 +342,7 @@ class HttpRequest
 
     # :returns: The uploaded file.
     # :rtype: `File`
+    #
     def get_file(name)
 =begin    	
         if name in self.__files:
@@ -322,6 +359,7 @@ class HttpRequest
 	#
     # :returns: A list of `File` objects.
     # :rtype: iter
+    #
     def get_files
 =begin
         # Fields might have more than one file uploaded for the same name,
@@ -329,5 +367,4 @@ class HttpRequest
         return chain.from_iterable(self.__files.values())
 =end
     end
-
 end

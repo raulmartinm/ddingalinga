@@ -1,3 +1,14 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+=end
+
 require 'ffi-rzmq'
 require 'msgpack'
 require 'deep_fetch'
@@ -19,15 +30,11 @@ class ComponentServer
 	@@TRANSACTIONS = 0x03
 	@@DOWNLOAD = 0x04
 
-    # Multipart request frames
-    @@Frames = Struct.new(:action, :mappings, :stream)
-
 
 	def initialize(context = nil, callback = nil, cli_args = nil)
 		@context = context
 		@callback = callback
 		@cli_args = cli_args
-        @@Frames.new('action','mappings','stream')
 	end
 
     def set_context(context)
@@ -65,6 +72,7 @@ class ComponentServer
 	# Check if debug is enabled for current component.
 	#
 	# :rtype: bool
+    #    
 	def debug
         return @cli_args[:debug]
     end
@@ -72,6 +80,7 @@ class ComponentServer
     # Check if payloads should use compact names.
     #
     # :rtype: bool
+    #    
     def compact_names
         return @cli_args[:compact_names]
     end
@@ -85,6 +94,7 @@ class ComponentServer
 	#
     # :returns: A result payload.
     # :rtype: `Payload`
+    #
 	def create_error_payload(exc, component, payload=nil)
         raise NotImplementedError.new("You must implement create_error_payload.")
     end
@@ -101,6 +111,7 @@ class ComponentServer
 	#
     # :returns: A component instance for the type of payload.
     # :rtype: `Component`.
+    #
    	def create_component_instance(payload)
        raise NotImplementedError.new("You must implement create_component_instance.")
     end
@@ -114,6 +125,7 @@ class ComponentServer
     #
     # :returns: A command result payload.
     # :rtype: `CommandResultPayload`
+    #
     def component_to_payload(command_name, component)
         raise NotImplementedError.new("You must implement component_to_payload.")
     end
@@ -123,7 +135,8 @@ class ComponentServer
     # :param payload: A command payload.
     # :type payload: `CommandPayload`
     # 
-    # :returns: A Payload with the component response.    
+    # :returns: A Payload with the component response.
+    #    
 	def process_payload(payload)
         if payload.get_path("command") == nil
             Loggging.log.debug "Payload missing command"
@@ -156,6 +169,7 @@ class ComponentServer
 
 
     # Process error when uses zmq
+    #
     def error_check(rc)
         if ZMQ::Util.resultcode_ok?(rc)
             false
@@ -168,8 +182,9 @@ class ComponentServer
 
     # Start handling incoming component requests and responses.
     #
-    # This method starts an infinite loop that polls socket for
+    # This method starts an infinite loop that polls socket for    
     # incoming requests.
+    #
     def run
         Loggging.log.debug "worker = #{component_name()} , Thread = #{Thread.current}"
 

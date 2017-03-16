@@ -1,3 +1,14 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
 
 require 'optparse'
 require_relative '../logging'
@@ -20,6 +31,7 @@ class ComponentRunner
     # :type server_cls: ComponentServer
     # :param help: Help text for the CLI command.
     # :type help: str
+    #
 	def initialize(worker, *args)
 		@worker = worker
 		@args = args
@@ -42,6 +54,7 @@ class ComponentRunner
 	# TCP port number.
 	#
     # :rtype: str or None
+    #
  	def tcp_port
         return @options[:tcp]
 	end
@@ -50,6 +63,7 @@ class ComponentRunner
 	# Component name.
 	#
     # :rtype: str
+    #
 	def name
 		return @options[:name]
 	end
@@ -57,6 +71,7 @@ class ComponentRunner
 	# Component type.
 	#
 	# :rtype: str
+	#
 	def component_type
 		return @options[:component]
     end    
@@ -64,6 +79,7 @@ class ComponentRunner
 	# Component action name.
 	#
 	# :rtype: str
+	#
 	def action_name
         return options[:action]
     end
@@ -71,6 +87,7 @@ class ComponentRunner
 	# Check if debug is enabled for current component.
 	#
 	# :rtype: bool
+	#
 	def debug
         return @options[:debug]
     end
@@ -151,6 +168,7 @@ class ComponentRunner
 	# 
     # :param callback: A callback to run on startup.
     # :type callback: function
+    #
     def set_startup_callback(callback)
         @startup_callback = callback
     end
@@ -159,6 +177,7 @@ class ComponentRunner
 	# 
     # :param callback: A callback to run on shutdown.
     # :type callback: function
+    #
     def set_shutdown_callback(callback)
         @shutdown_callback = callback
     end
@@ -167,6 +186,7 @@ class ComponentRunner
 	# 
     # :param callback: A callback to run on message callback errors.
     # :type callback: function
+    #
     def set_error_callback(callback)
         @error_callback = callback
     end
@@ -175,6 +195,7 @@ class ComponentRunner
 	# 
     # :params callbacks: Callbacks for each action.
     # :type callbacks: dict
+    #
     def set_callbacks(callbacks)
         @callbacks = callbacks
     end
@@ -186,6 +207,7 @@ class ComponentRunner
     # Caller script is stopped when server finishes, by exiting
     # with an exit code.
     # http://zguide.zeromq.org/page:all#Multithreading-with-ZeroMQ (Multithreading with ZeroMQ)
+    #
     def start_componet()
 		Loggging.log.debug "Starting component server..."
 
@@ -253,6 +275,7 @@ class ComponentRunner
 	#
     # :param callback: Callable to handle requests.
     # :type callback: A callable.
+    #
 	def run(callback)
 		@callback = callback
 
@@ -268,6 +291,4 @@ class ComponentRunner
 		# Run SDK component
 		start_componet()
 	end
-
-
 end

@@ -1,11 +1,24 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
 require_relative '../errors'
 require_relative '../logging'
 
 # Exception class for component errors.
+#
 class ComponentError < KatanaError
 end
 
 # Base KATANA SDK component class.
+#
 class Component	
 
 
@@ -34,6 +47,7 @@ class Component
     #
     # :param callback: Callable to handle requests.
     # :type callback: A callable.
+    #
 	def run(callback)
 		if @runner == nil
 			@logger.error "No component runner defined"
@@ -71,6 +85,7 @@ class Component
     # :type name: str
     # 
     # :rtype: bool
+    #
     def has_resource(name)
         return @resources.key?(name) # Exists key in Hash
         return @resources.include?(name) # Exists value into Array
@@ -83,7 +98,8 @@ class Component
     # :param callable: A callable that returns the resource value.
     # :type callable: function
     #
-    #:raises: ComponentError
+    # :raises: ComponentError
+    #
 	def set_resource(name, callable)
         value = callable()
         if value == nil
@@ -103,6 +119,7 @@ class Component
     # :raises: ComponentError
 	#
     # :rtype: object
+    #
     def get_resource(name)
       
         if !has_resource(name)
@@ -120,6 +137,7 @@ class Component
     # :param callback: A callback to execute on startup.
     # :type callback: function
     # :rtype: Component
+    #
     def startup(callback)
         @startup_callback = callback
         return self
@@ -133,6 +151,7 @@ class Component
     # :type callback: function
     # 
     # :rtype: Component
+    #
     def shutdown(callback)
         @shutdown_callback = callback
         return self
@@ -148,6 +167,7 @@ class Component
 	# :type callback: function
 	#
 	# :rtype: Component
+    #
 	def error(callback)
 		@error_callback = callback
 		return self
@@ -158,6 +178,7 @@ class Component
  	# Given value is converted to string before being logged.
  	#
  	# Output is truncated to have a maximum of 100000 characters.
+    #
 	def log(value)
         @logger.debug(value_to_log_string(value))
     end

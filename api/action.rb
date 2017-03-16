@@ -1,12 +1,25 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+
+=end
+
 require_relative 'base'
 require_relative 'param'
 require_relative '../logging'
 
 # Action API class for Service component.
+#
 class Action < Api
 
 	def initialize(action, params, transport, *args)
-		super(*args) # (path, name, version, platform_version, variables=nil, debug=false)
+		super(*args) # (path, name, version, framework_version, variables=nil, debug=false)
 		@action = action
 		@params = params
 		@transport = transport
@@ -15,6 +28,7 @@ class Action < Api
 	# Determines if the current service is the origin of the request.
 	# 
     # :rtype: bool
+    #
 	def is_origin
 		origin = @transport.get_path("meta","origin")
 		return (origin.get_path("name") == @name && origin.get_path("version") == @version)
@@ -23,6 +37,7 @@ class Action < Api
 	# Get the name of the action.
 	#
 	# :rtype: str
+    #    
 	def get_action_name
 		return @action
 	end
@@ -38,6 +53,7 @@ class Action < Api
     # :type value: str
 	#
     # :rtype: bool
+    #    
 	def set_property(name, value)
 		@transport.deep_nest("meta","properties",name,value)
 	end

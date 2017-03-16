@@ -1,10 +1,27 @@
+=begin
+Ruby SDK for the KATANA(tm) Framework (http://katana.kusanagi.io)
+
+Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+
+Distributed under the MIT license.
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+=end
+
 require 'deep_fetch'
 require_relative 'logging'
 require_relative 'utils'
 
+
+# class to wrap and access payload data using paths.
+#
+# Global payload field names mappings are used by default.
+#
 class Payload
 
-	@name = nil
+	# Payload entity name
+	@name = 'void'
 
 	# Disable field mappings in all payloads
 	@@DISABLE_FIELD_MAPPINGS = false
@@ -167,6 +184,11 @@ class Payload
 		end
 	end
 
+	def path_exists(*args)
+		return !get_path(*args){nil}.nil?
+	end		
+
+
 	def get_param(location, name, value = nil, &block)
 		argsn = Array.new		
 		if (@@DISABLE_FIELD_MAPPINGS)
@@ -193,7 +215,7 @@ class Payload
 		else
 			argsn = Array.new
 			args.each do |arg|
-				argsn.push(@@FIELD_MAPPINGS[arg]!=nil ? @@FIELD_MAPPINGS[arg] : arg)
+				argsn.push(@@FIELD_MAPPINGS[arg] || arg)
 			end
 		end		
 		@payload.merge!((argsn + [value]).reverse.reduce { |s,e| { e => s } }) { |k,o,n| o.merge(n) }
