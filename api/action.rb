@@ -25,38 +25,38 @@ class Action < Api
 		@transport = transport
 	end
 
-	# Determines if the current service is the origin of the request.
-	# 
+    # Determines if the current service is the origin of the request.
+    # 
     # :rtype: bool
     #
-	def is_origin
-		origin = @transport.get_path("meta","origin")
-		return (origin.get_path("name") == @name && origin.get_path("version") == @version)
-	end
+    def is_origin
+        origin = @transport.get_path("meta","origin")
+        return (origin.get_path("name") == @name && origin.get_path("version") == @version)
+    end
 
-	# Get the name of the action.
-	#
-	# :rtype: str
+    # Get the name of the action.
+    #
+    # :rtype: str
     #    
-	def get_action_name
-		return @action
-	end
+    def get_action_name
+        return @action
+    end
 
-	# Sets a user land property.
-	#
-	# sets a userland property in the transport with the given
+    # Sets a user land property.
+    #
+    # sets a userland property in the transport with the given
     # name and value.
-	#
+    #
     # :param name: The property name.
     # :type name: str
     # :param value: The property value.
     # :type value: str
-	#
+    #
     # :rtype: bool
     #    
-	def set_property(name, value)
-		@transport.deep_nest("meta","properties",name,value)
-	end
+    def set_property(name, value)
+        @transport.deep_nest("meta","properties",name,value)
+    end
 
 	# Gets a parameter passed to the action.
 	#
