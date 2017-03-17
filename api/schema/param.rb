@@ -20,7 +20,7 @@ class ParamSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = payload
+        @payload = Payload.new(payload)
     end
 
     

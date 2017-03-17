@@ -29,7 +29,7 @@ class ActionSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = payload
+        @payload = Payload.new(payload)
         @params = @payload.get_path("params"){{}}
         @files = @payload.get_path("files"){{}}
     end

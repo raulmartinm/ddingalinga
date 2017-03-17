@@ -23,7 +23,7 @@ class ServiceSchema
     def initialize(name, version, payload)
         @name = name
         @version = version
-        @payload = payload
+        @payload = Payload.new(payload)
         @actions = @payload.get_path("actions"){{}}
     end
 

@@ -21,7 +21,7 @@ class FileSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = payload
+        @payload = Payload.new(payload)
     end
 
     # Get file parameter name.
