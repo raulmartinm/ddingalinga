@@ -159,7 +159,7 @@ class ActionSchema
     # :rtype: list
     #
     def get_params
-        return @params.keys()
+        return @params.keys
     end
 
     
@@ -195,7 +195,7 @@ class ActionSchema
     # :rtype: list
     #
     def get_files
-        return @files.keys()
+        return @files.keys
     end
 
     # Check that a file parameter schema exists.

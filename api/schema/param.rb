@@ -112,19 +112,21 @@ class ParamSchema
     # :rtype: list
     #
     def get_items
-=begin        
-        if self.get_type() != 'array':
-            return ''
+        if self.get_type() != "array"
+            return ""
+        end
 
-        if not @payload.path_exists('items'):
-            return ''
+        if not @payload.path_exists('items')
+            return ""
+        end
 
-        try:
+        begin
             # Items must be a valid JSON string
-            return json.loads(@payload.get('items'))
-        except:
-            LOG.exception('Value for "items" is not valid JSON')
-            return ''
+            return json.deserialize(@payload.get_path("items"))
+        rescue Exception => exc
+            Loggging.log.debug "Value for 'items' is not valid JSON"
+            return ""
+        end
 =end
     end
 
@@ -243,10 +245,11 @@ class ParamSchema
 
         begin
             # Items must be a valid JSON string
-            return json.loads(@payload.get_path("enum"))
+            return json.deserialize(@payload.get_path("enum"))
         rescue Exception => exc
             Loggging.log.debug "Value for 'enum' is not valid JSON"
             return ""
+        end
     end
 
     

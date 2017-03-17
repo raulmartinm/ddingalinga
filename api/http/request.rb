@@ -9,21 +9,26 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 
 =end
+require_relative '../../utils'
+require 'uri'
+
+
 
 # HTTP request class.
 #
 class HttpRequest
-	def initialize(method, url)
-		@method = method
+	def initialize(method, url, protocol_version="1.1",query={},headers={}, post_data={}, body="",files={})
+		@method = method.uppcase
 		@url = url
-=begin
-		@protocol_version = kwargs.get('protocol_version') or '1.1'
-        @query = kwargs.get('query') or MultiDict()
-        @headers = kwargs.get('headers') or MultiDict()
-        @post_data = kwargs.get('post_data') or MultiDict()
-        @body = kwargs.get('body') or ''
-        @files = kwargs.get('files') or MultiDict()
-=end
+		@protocol_version = protocol_version
+        @query = query
+        @headers = headers
+        @post_data = post_data
+        @body = body
+        @files = files
+
+        # Save parsed URL
+        @parsed_url = URI.parse(@url)
 	end
 
 	# Determine if the request used the given HTTP method.
@@ -36,7 +41,8 @@ class HttpRequest
     # 
     # :rtype: bool
     #
-	def is_method
+	def is_method(method)
+        return @method == method.uppcase
 	end
 
 
@@ -64,6 +70,7 @@ class HttpRequest
     # :rtype: str
     #
 	def get_url_scheme
+        return @arsed_url.scheme
 	end
 
 
@@ -74,6 +81,7 @@ class HttpRequest
     # :rtype: str
     #
 	def get_url_host
+        return @arsed_url.host
 	end
 
 	# Get request URL path.
@@ -81,7 +89,8 @@ class HttpRequest
 	# rtype: str
     #
     def get_url_path
-        # return self.__parsed_url.path.rstrip('/')
+        # return @parsed_url.path.rstrip('/')
+        return @parsed_url.path.rtrim!("/") || @parsed_url.path
     end
 
 
@@ -96,7 +105,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_query_param(name)
-        # return name in self.__query
+        return !query[name].nil?
     end
 
 
@@ -114,7 +123,7 @@ class HttpRequest
     # :rtype: str
     #
     def get_query_param(name, default="")
-        # return self.__query.get(name, (default, ))[0]
+        return !@query[name].nil? ? @query[name][0] : default
     end
 
 
@@ -131,7 +140,7 @@ class HttpRequest
     # :rtype: list
     #
     def get_query_param_array(self, name, default=nil)
-        #return self.__query.get(name, default or [])
+        return @query[name] || default || []
     end
 
 	# Get all HTTP query params.
@@ -140,7 +149,7 @@ class HttpRequest
     # :rtype: dict
     #
     def get_query_params
-        #return {key: value[0] for key, value in self.__query.items()}
+        #return {key: value[0] for key, value in @query.items()}
     end
 
 
@@ -152,7 +161,7 @@ class HttpRequest
     # :rtype: `MultiDict`
     #
     def get_query_params_array
-        # return self.__query
+        return @query
     end
 
 	# Determines if the param is defined.
@@ -166,7 +175,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_post_param(name)
-        #return name in self.__post_data
+        return !@post_data[name].nil?
     end
 
 	# Gets a param from the HTTP post data.
@@ -184,7 +193,7 @@ class HttpRequest
     # :rtype: str
     #
     def get_post_param(name, default="")
-        # return self.__post_data.get(name, (default, ))[0]
+        # return @post_data.get(name, (default, ))[0]
     end
 
 
@@ -201,7 +210,7 @@ class HttpRequest
     # :rtype: list
     #
     def get_post_param_array(self, name, default=nil)
-        #return self.__post_data.get(name, default or [])
+        #return @post_data.get(name, default or [])
     end
 
 	# Get all HTTP post params.
@@ -210,7 +219,7 @@ class HttpRequest
     # :rtype: dict
     #
     def get_post_params
-        # return {key: value[0] for key, value in self.__post_data.items()}
+        # return {key: value[0] for key, value in @post_data.items()}
     end
 
 	# Get all HTTP post params.
@@ -221,7 +230,7 @@ class HttpRequest
     # :rtype: `MultiDict`
     #
     def get_post_params_array
-        # return self.__post_data
+        return @post_data
     end
 
 
@@ -236,7 +245,7 @@ class HttpRequest
     # :rtype: bool
     #
     def is_protocol_version(version)
-        # return self.__protocol_version == version
+        return @protocol_version == version
     end
 
 	# Gets the HTTP version.
@@ -247,7 +256,7 @@ class HttpRequest
     # :rtype: str
     #
     def get_protocol_version
-        # return self.__protocol_version
+        return @protocol_version
     end
 
     
@@ -261,7 +270,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_header(name)
-        # return name in self.__headers
+        return !@headers[name].nil?
     end
 
     
@@ -280,13 +289,11 @@ class HttpRequest
     # :rtype: str
     #
     def get_header(name, default="")
-
-=begin
-    	if not self.has_header(name):
+    	if !self.has_header(name)
         	return default
+        end
 
-    	return ', '.join(self.__headers[name])
-=end
+    	return @headers[name].join(", ")
     end
 
     
@@ -296,7 +303,7 @@ class HttpRequest
     # :rtype: `MultiDict`
     #
     def get_headers
-        # return self.__headers
+        return @headers
     end
 
     # Determines if the HTTP request body has content.
@@ -306,7 +313,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_body
-        # return self.__body != ''
+        return @body != ""
     end
 
 	# Gets the HTTP request body.
@@ -318,7 +325,7 @@ class HttpRequest
     # :rtype: str
     #
     def get_body
-        # return self.__body
+        return @body
     end
 
     # Check if a file was uploaded in current request.
@@ -329,7 +336,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_file(name)
-        #return name in self.__files
+        return !@files[name].nil?
     end
 
     
@@ -345,9 +352,9 @@ class HttpRequest
     #
     def get_file(name)
 =begin    	
-        if name in self.__files:
+        if name in @files:
             # Get only the first file
-            return self.__files.getone(name)
+            return @files.getone(name)
         else:
             return File(name, path='')
 =end
@@ -364,7 +371,7 @@ class HttpRequest
 =begin
         # Fields might have more than one file uploaded for the same name,
         # there for it can happen that file names are duplicated.
-        return chain.from_iterable(self.__files.values())
+        return chain.from_iterable(@files.values())
 =end
     end
 end
