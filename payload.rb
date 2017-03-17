@@ -154,8 +154,8 @@ class Payload
 	    'maximum_length'=> 'xl',
 	}
 
-	def initialize()
-		@payload = {}		
+	def initialize(payload={})
+		@payload = payload		
 	end
 
 	def set_payload(paylaod)

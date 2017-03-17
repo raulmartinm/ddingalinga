@@ -14,6 +14,7 @@ require_relative '../../logging'
 require_relative '../../payload'
 require_relative 'error'
 require_relative 'param'
+require_relative 'file'
 
 
 # Error class for schema action errors.
@@ -97,18 +98,21 @@ class ActionSchema
     # :rtype: dict
     #
     def resolve_entity(data)
-=begin
+
         path = self.get_entity_path()
         # When there is no path no traversing is done
-        if not path:
+        if !path
             return data
+        end
 
-        try:
+=begin
+        begin
             return get_path(data, path, delimiter=self.get_path_delimiter())
-        except KeyError:
-            error = 'Cannot resolve entity for action: {}'
-            raise ActionSchemaError(error.format(self.get_name()))
-=end            
+        rescue Exception => KeyError
+            error = "Cannot resolve entity for action: #{self.get_name()}"
+            raise ActionSchemaError.new(error)
+        end
+=end
     end
 
     # Check if an entity definition exists for the action.
@@ -178,12 +182,12 @@ class ActionSchema
     # :rtype: ParamSchema
     #
     def get_param_schema(name)
-        if not self.has_param(name)
+        if !self.has_param(name)
             error = "Cannot resolve schema for parameter: #{name}"
-            raise ActionSchemaError.new (error)
+            raise ActionSchemaError.new(error)
         end
 
-        return ParamSchema.new (name, @params[name])
+        return ParamSchema.new(name, @params[name])
     end
 
     # Get the file parameter names defined for the action.
@@ -191,7 +195,7 @@ class ActionSchema
     # :rtype: list
     #
     def get_files
-        # return @files.keys()
+        return @files.keys()
     end
 
     # Check that a file parameter schema exists.
@@ -202,7 +206,7 @@ class ActionSchema
     # :rtype: bool
     #
     def has_file(name)
-        # return name in @files
+        return !@files[name].nil?
     end
 
     # Get schema for a file parameter.
@@ -213,13 +217,12 @@ class ActionSchema
     # :rtype: FileSchema
     #
     def get_file_schema(name)
-=begin        
-        if not self.has_file(name):
-            error = 'Cannot resolve schema for file parameter: {}'
-            raise ActionSchemaError(error.format(name))
+        if !self.has_file(name)
+            error = "Cannot resolve schema for file parameter: #{name}"
+            raise ActionSchemaError.new(name)
+        end
 
-        return FileSchema(name, @files[name])
-=end
+        return FileSchema.new(name, @files[name])
     end
 
     
@@ -228,7 +231,7 @@ class ActionSchema
     # :rtype: HttpActionSchema
     #
     def get_http_schema
-        return HttpActionSchema.new (@payload.get_path("http"){{}})
+        return HttpActionSchema.new(@payload.get_path("http"){{}})
     end
 
 end
@@ -239,8 +242,7 @@ class HttpActionSchema
  
 
     def initialize(payload)
-        @payload = Payload.new
-        @payload.set_data(payload)
+        @payload = Payload.new(payload)        
     end
 
     # Check if the Gateway has access to the action.

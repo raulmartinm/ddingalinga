@@ -241,10 +241,10 @@ class ParamSchema
             return ""
         end
 
-        try:
+        begin
             # Items must be a valid JSON string
             return json.loads(@payload.get_path("enum"))
-        except:
+        rescue Exception => exc
             Loggging.log.debug "Value for 'enum' is not valid JSON"
             return ""
     end
@@ -265,7 +265,7 @@ class ParamSchema
     # :rtype: HttpParamSchema
     #
     def get_http_schema
-        return HttpParamSchema.new (self.get_name(), @payload.get_path("http"){{}})
+        return HttpParamSchema.new(self.get_name(), @payload.get_path("http"){{}})
     end
 
 # HTTP semantics of a parameter schema in the platform.
@@ -275,8 +275,7 @@ class HttpParamSchema
 
     def initialize(name, payload)
         @name = name
-        @payload = Payload.new
-        @payload.set_data(payload)
+        @payload = Payload.new(payload)        
     end
 
     # Check if the Gateway has access to the parameter.

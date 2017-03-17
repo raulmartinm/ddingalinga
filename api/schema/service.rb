@@ -86,7 +86,7 @@ class ServiceSchema
     # :rtype: HttpServiceSchema
     #
     def get_http_schema
-        return HttpServiceSchema.new (@payload.get_path("http"){{}})
+        return HttpServiceSchema.new(@payload.get_path("http"){{}})
     end
 end
 
@@ -97,8 +97,7 @@ class HttpServiceSchema
  
 
     def initialize(payload)
-        @payload = Payload.new
-        @payload.set_data(payload)
+        @payload = Payload.new(payload)        
     end
 
     # Check if the Gateway has access to the Service.

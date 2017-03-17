@@ -58,8 +58,8 @@ class Action < Api
         @transport.deep_nest("meta","properties",name,value)
     end
 
-	# Gets a parameter passed to the action.
-	#
+    # Gets a parameter passed to the action.
+    #
     # Returns a Param object containing the parameter for the given location
     # and name.
     #
