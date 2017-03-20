@@ -234,6 +234,11 @@ class Payload
 		return @payload.empty?
 	end
 
+	def get_names
+		return @payload.keys
+	end
+
+
 	def to_s
 		return @payload.to_s
 	end
