@@ -149,7 +149,8 @@ class HttpRequest
     # :rtype: dict
     #
     def get_query_params
-        #return {key: value[0] for key, value in @query.items()}
+        # return {key: value[0] for key, value in @query.items()}
+        return Hash[@query.map{ |k, v| [k, v[0]] }]
     end
 
 
@@ -194,6 +195,7 @@ class HttpRequest
     #
     def get_post_param(name, default="")
         # return @post_data.get(name, (default, ))[0]
+        return !@post_data[name].nil? ? @query[name][0] : default
     end
 
 
@@ -210,7 +212,8 @@ class HttpRequest
     # :rtype: list
     #
     def get_post_param_array(self, name, default=nil)
-        #return @post_data.get(name, default or [])
+        # return @post_data.get(name, default or [])
+        return @post_data[name] || default || []
     end
 
 	# Get all HTTP post params.
@@ -220,6 +223,7 @@ class HttpRequest
     #
     def get_post_params
         # return {key: value[0] for key, value in @post_data.items()}
+        return Hash[@post_data.map{ |k, v| [k, v[0]] }]
     end
 
 	# Get all HTTP post params.

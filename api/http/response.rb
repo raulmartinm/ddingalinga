@@ -14,22 +14,21 @@ file that was distributed with this source code.
 #
 class HttpResponse
 
-    def initialize(status_code, status_text)
-=begin
-        self.__headers = MultiDict()
+    def initialize(status_code, status_text, protocol_version = "1.1", body = "", headers = {})
         self.set_status(status_code, status_text)
-        self.set_protocol_version(kwargs.get('protocol_version'))
-        self.set_body(kwargs.get('body'))
+        self.set_protocol_version(protocol_version)
+        self.set_body(body)
+        @headers = {}
 
+=begin
         # Set response headers
-        headers = kwargs.get('headers')
-        if headers:
-            # Headers should be a list of tuples
-            if isinstance(headers, dict):
-                headers = headers.items()
-
+        headers = headers
+        if !headers.nil?
+            
             for name, value in headers:
                 self.set_header(name, value)
+            end
+        end
 =end
     end
 
@@ -41,7 +40,7 @@ class HttpResponse
     # :rtype: bool
     #
     def is_protocol_version(version)
-        # return self.__protocol_version == version
+        return @protocol_version == version
     end
 
 	# Get the HTTP version.
@@ -49,7 +48,7 @@ class HttpResponse
     # :rtype: str
     #
     def get_protocol_version
-        # return self.__protocol_version
+        return @protocol_version
      end
 
     
@@ -64,8 +63,7 @@ class HttpResponse
     # :rtype: HttpResponse
     #
     def set_protocol_version(version)
-        #self.__protocol_version = version or '1.1'
-        #return self
+        @protocol_version = version || "1.1"
     end
 
     # Determine if the response uses the given status.
@@ -76,7 +74,7 @@ class HttpResponse
     # :rtype: bool
     #
     def is_status(status)
-        # return self.__status == status
+        return @status == status
     end
 
     # Get the HTTP status.
@@ -84,7 +82,7 @@ class HttpResponse
     # :rtype: str
     #
     def get_status
-        # return self.__status
+        return @status
     end
 
     
@@ -93,7 +91,7 @@ class HttpResponse
     # :rtype: int
     #
     def get_status_code
-        # return self.__status_code
+        return @status_code
     end
 
     
@@ -102,7 +100,7 @@ class HttpResponse
     # :rtype: str
     #
     def get_status_text
-        #return self.__status_text
+        return @status_text
     end
 
     
@@ -119,12 +117,9 @@ class HttpResponse
     # :rtype: HttpResponse
     #
     def set_status(code, text)
-=begin
-        self.__status_code = code
-        self.__status_text = text
-        self.__status = '{} {}'.format(code, text)
-        return self
-=end
+        @status_code = code
+        @status_text = text
+        @status = "#{code} #{text}"
     end
 
     # Determines if the HTTP header is defined.
@@ -135,7 +130,7 @@ class HttpResponse
     # :rtype: bool
     #
     def has_header(name)
-        # return name in self.__headers
+        return !@headers[name].nil?
     end
 
     # Get an HTTP header.
@@ -146,7 +141,16 @@ class HttpResponse
     # :rtype: str
     #
     def get_header(name)
-        # self.__headers.get(name)
+=begin
+    
+        values = self.__headers.get(name)
+        if not values:
+            return ''
+
+        # Get first header value
+        return values[0]   
+=end        
+        return @headers[name]
     end
 
     
@@ -155,7 +159,7 @@ class HttpResponse
     # :rtype: `MultiDict`
     #
     def get_headers
-        # return self.__headers
+        return @headers
     end
 
     
@@ -171,8 +175,7 @@ class HttpResponse
     # :rtype: HttpResponse
     #
     def set_header(name, value)
-        #self.__headers[name] = value
-        #return self
+        @headers[name] = value
     end
 
     # Determines if the response has content.
@@ -182,7 +185,7 @@ class HttpResponse
     # :rtype: bool
     #
     def has_body
-        # return self.__body != ''
+        return @body != ""
     end
 
     # Gets the response body.
@@ -191,7 +194,7 @@ class HttpResponse
     # :rtype: str
     #
     def get_body
-        # return self.__body
+        return @body
     end
 
 	# Set the content of the HTTP response.
@@ -205,8 +208,7 @@ class HttpResponse
     # :rtype: HttpResponse
     #
     def set_body(content=nil)
-        #self.__body = content or ''
-        #return self
+        @body = content || ""
     end
 
 end

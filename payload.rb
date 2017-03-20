@@ -230,6 +230,10 @@ class Payload
 		self.deep_nest(@name,data)
 	end
 
+	def has_data
+		return @payload.empty?
+	end
+
 	def to_s
 		return @payload.to_s
 	end
