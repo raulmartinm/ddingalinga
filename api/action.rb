@@ -13,13 +13,29 @@ file that was distributed with this source code.
 require_relative 'base'
 require_relative 'param'
 require_relative '../logging'
+require_relative '../errors'
+
+
+# Base error class for API Action errors.
+#
+class ActionError < ApiError 
+ 
+    def initialize(service, version, action)
+        super
+        @service = service
+        @version = version
+        @action = action
+        @service_string = "'#{service}' (#{version})"
+    end
+end
+
 
 # Action API class for Service component.
 #
 class Action < Api
 
 	def initialize(action, params, transport, *args)
-		super(*args) # (path, name, version, framework_version, variables=nil, debug=false)
+		super(*args) # (component, path, name, version, framework_version, variables=nil, debug=false)
 		@action = action
 		@params = params
 		@transport = transport

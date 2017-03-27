@@ -86,7 +86,7 @@ class HttpResponse
     end
 
     
-	# Get HTTP status code.
+    # Get HTTP status code.
 	#
     # :rtype: int
     #
@@ -95,7 +95,7 @@ class HttpResponse
     end
 
     
-	# Get HTTP status text.
+    # Get HTTP status text.
 	#
     # :rtype: str
     #
@@ -104,8 +104,8 @@ class HttpResponse
     end
 
     
-	# Set the HTTP status to the given status.
-	# 
+    # Set the HTTP status to the given status.
+    # 
     # Sets the status of the response to the specified
     # status code and text.
     #

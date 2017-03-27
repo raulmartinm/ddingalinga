@@ -31,7 +31,7 @@ class HttpRequest
         @parsed_url = URI.parse(@url)
 	end
 
-	# Determine if the request used the given HTTP method.
+    # Determine if the request used the given HTTP method.
     # 
     # Returns True if the HTTP method of the request is the same
     # as the specified method, otherwise False.
@@ -46,8 +46,8 @@ class HttpRequest
 	end
 
 
-	# Gets the HTTP method.
-	# 
+    # Gets the HTTP method.
+    # 
     # Returns the HTTP method used for the request.
     # 
     # :returns: The HTTP method.
@@ -57,8 +57,8 @@ class HttpRequest
 		return @method
 	end
 
-	# Get request URL.
-	# 
+    # Get request URL.
+    # 
     # :rtype: str
     #
 	def get_url
@@ -94,8 +94,8 @@ class HttpRequest
     end
 
 
-	# Determines if the param is defined.
-	#
+    # Determines if the param is defined.
+    #
     # Returns True if the param is defined in the HTTP query string,
     # otherwise False.
 	#

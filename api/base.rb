@@ -12,6 +12,7 @@ file that was distributed with this source code.
 
 require_relative '../errors'
 require_relative '../logging'
+require_relative '../schema'
 
 # Exception class for API errors.
 #
@@ -31,7 +32,7 @@ class Api
 		@framework_version = framework_version
 		@variables = variables
 		@debug = debug
-		# @schema = get_schema_registry()
+		@schema = get_schema_registry()
 	end
 
 
@@ -125,9 +126,11 @@ class Api
     #
 	def get_services()
         services = []
-        for name in self._schema.get_service_names():
-            for version in self._schema.get(name).keys():
-                services.append({'name': name, 'version': version})
+        for name in @schema.get_service_names()
+            for version in @schema.get(name).keys()
+                services.append({"name" => name, "version" => version})
+            end
+        end
 
         return services
 	end
@@ -148,19 +151,23 @@ class Api
     #
     def get_service_schema(name, version)
         # Resolve service version when wildcards are used
-        if '*' in version:
-            try:
+        if version.include? "*"
+=begin        	
+            begin
+
                 version = VersionString(version).resolve(
-                    self._schema.get(name, {}).keys()
-                    )
-                payload = self._schema.get('{}/{}'.format(name, version), None)
-            except KatanaError:
-                payload = None
+                    @schema.get_path(name, {}).keys()
+                )
+                payload = @schema.get_path(name, version){nil}
+            rescue KatanaError
+                payload = nil
+            end
+=end            
         else
-            payload = self._schema.get('{}/{}'.format(name, version), None)
+            payload = @schema.get_path(name, version){nil}
         end
 
-        if not payload:
+        if payload.nil?
             error = "Cannot resolve schema for Service: '#{name}' (#{version})"
             raise ApiError.new(error)
         end
