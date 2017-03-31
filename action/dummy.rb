@@ -41,4 +41,26 @@ def bootstrap(action)
 end
 
 service = Service.new *ARGV
-service.run_action(method(:bootstrap))
+service.action("dummy",method(:bootstrap))
+service.run()
+
+
+
+=begin
+def read_handler(action)
+    user_id = action.get_param('id').get_value()
+
+    # Users read action returns a single user entity
+    action.set_entity({
+        'id': user_id,
+        'name': 'foobar',
+        'first_name': 'Foo',
+        'last_name': 'Bar',
+    })
+    return action
+end
+
+service = Service.new *ARGV
+service.action("read", method(:read_handler))
+service.run()
+=end

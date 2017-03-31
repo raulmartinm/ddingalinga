@@ -8,10 +8,20 @@ require_relative 'runner'
 class Service < Component
 
 	def initialize (*args)
-		runner(ComponentRunner.new(ActionWorker.new, *args))
+		super
+		help = "Service component action to process application logic"
+		runner(ComponentRunner.new(self, ServiceServer.new, help, *args))
 	end
 
-	def run_action(callback)
-        run(callback)
+	# Set a callback for an action.
+	#
+    # :param name: Service action name.
+    # :type name: str
+    # :param callback: Callback to handle action calls.
+    # :type callback: callable
+    #
+    def action(name, callback)
+        @callbacks[name] = callback
     end
+
 end

@@ -116,7 +116,7 @@ class ParamSchema
             return ""
         end
 
-        if not @payload.path_exists('items')
+        if !@payload.path_exists("items")
             return ""
         end
 
@@ -169,8 +169,8 @@ class ParamSchema
     # :rtype: bool
     #
     def is_exclusive_min
-        if not @payload.path_exists('minimum'):
-            return False
+        if !@payload.path_exists("minimum")
+            return false
 
         return @payload.get_path("exclusive_minimum"){false}
     end
@@ -239,7 +239,7 @@ class ParamSchema
     # :rtype: list
     #
     def get_enum
-        if !@payload.path_exists('enum')
+        if !@payload.path_exists("enum")
             return ""
         end
 

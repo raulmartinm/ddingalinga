@@ -31,9 +31,9 @@ class ComponentServer
 	@@DOWNLOAD = 0x04
 
 
-	def initialize(context = nil, callback = nil, cli_args = nil)
+	def initialize(context = nil, callbacks = nil, cli_args = nil)
 		@context = context
-		@callback = callback
+		@callbacks = callbacks
 		@cli_args = cli_args
 	end
 
@@ -41,8 +41,8 @@ class ComponentServer
         @context = context
     end
 
-    def set_callback(callback)
-        @callback = callback
+    def set_callbacks(callbacks)
+        @callbacks = callbacks
     end
 
     def set_args(cli_args)
@@ -137,7 +137,7 @@ class ComponentServer
     # 
     # :returns: A Payload with the component response.
     #    
-	def process_payload(payload)
+	def process_payload(action, payload)
         if payload.get_path("command") == nil
             Loggging.log.debug "Payload missing command"
             return ErrorPayload.new.init("Internal communication failed")
@@ -152,7 +152,7 @@ class ComponentServer
 
         # Call callback
         begin
-            component = @callback.call(component)
+            component = @callbacks[action].call(component)
         rescue Exception => exc
             Loggging.log.error "Exception: #{exc}"
             payload = create_error_payload(exc,component,payload)
@@ -220,7 +220,7 @@ class ComponentServer
             Loggging.log.debug "Received commandPayload: [#{commandPayload}]"
 
             # Process message reviced
-            commandResultPayload = process_payload(commandPayload)
+            commandResultPayload = process_payload(received_action, commandPayload)
             Loggging.log.debug "Responser commandResultPayload: [#{commandResultPayload}]"
 
             # send type of response

@@ -11,6 +11,7 @@ file that was distributed with this source code.
 =end
 require_relative '../errors'
 require_relative '../logging'
+require_relative '../schema'
 
 # Exception class for component errors.
 #
@@ -37,47 +38,37 @@ class Component
 		@runner = runner
 	end
 
-	# Run SDK component.
-	#
-    # Callback must be a callable that receives a
-    # `katana.api.base.Api` argument.
-    #
+    # Run SDK component.
+    # 
     # Calling this method checks command line arguments before
     # component server starts.
     #
-    # :param callback: Callable to handle requests.
-    # :type callback: A callable.
-    #
-	def run(callback)
-		if @runner == nil
-			@logger.error "No component runner defined"
-			# Child classes must create a component runner instance
-            raise ComponentError.new("No component runner defined")
-		end 
+    def run(self)
 
-		@runner.run(callback)
-=begin
-       if not self._runner:
+        if @runner == nil
+            @logger.error "No component runner defined"
             # Child classes must create a component runner instance
-            raise Exception('No component runner defined')
+            raise ComponentError.new("No component runner defined")
+        end 
 
-        if self.__startup_callback:
-            self._runner.set_startup_callback(self.__startup_callback)
+        if @startup_callback
+            @runner.set_startup_callback(@startup_callback)
+        end
 
-        if self.__shutdown_callback:
-            self._runner.set_shutdown_callback(self.__shutdown_callback)
+        if @shutdown_callback
+            @runner.set_shutdown_callback(@shutdown_callback)
+        end
 
-        if self.__error_callback:
-            self._runner.set_error_callback(self.__error_callback)
+        if @error_callback
+            @runner.set_error_callback(@error_callback)
+        end
 
         # Create the global schema registry instance on run
-        SchemaRegistry()
+        SchemaRegistry.new
 
-        self._runner.set_callbacks(self._callbacks)
-        self._runner.run()
-=end
-        
-	end
+        @runner.set_callbacks(@callbacks)
+        @runner.run()
+    end
 
 	# Check if a resource name exist.
 	#
@@ -156,7 +147,6 @@ class Component
         @shutdown_callback = callback
         return self
 	end
-
 
 
 	# Register a callback to be called on message callback errors.

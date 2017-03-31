@@ -18,7 +18,7 @@ require_relative 'payload'
 
 # Global service schema registry.
 #
-class SchemaRegistry()
+class SchemaRegistry
     include Singleton
 
     def initialize()

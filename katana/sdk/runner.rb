@@ -25,26 +25,24 @@ class ComponentRunner
 
 	# Constructor.
 	# 
-    # :param component: The component to run.
-    # :type component: Component
-    # :param server_cls: Class for the component server.
-    # :type server_cls: ComponentServer
-    # :param help: Help text for the CLI command.
-    # :type help: str
-    #
-	def initialize(worker, *args)
+	# :param component: The component to run.
+	# :type component: Component
+	# :param server_cls: Class for the component server.
+	# :type server_cls: ComponentServer
+	# :param help: Help text for the CLI command.
+	# :type help: str
+	#
+	def initialize(componet, worker, help, *args)
 		@worker = worker
+		@component = component
+		@help = help		
 		@args = args
-		@callback = nil
 
+		@callback = nil
 		@startup_callback = nil
         @shutdown_callback = nil
         @error_callback = nil
         @callbacks = nil
-        
-		# self.__component = component
-		# self.server_cls = server_cls
-		# self.help = help
 	end
 
 	def args
@@ -218,7 +216,7 @@ class ComponentRunner
             channel = "tcp://127.0.0.1:#{tcp_port()}"
         else
             # Abstract domain unix socket
-            # channel = "ipc://#{socket_name()}"
+            channel = "ipc://#{socket_name()}"
         end
         Loggging.log.debug "channel = #{channel}"
 
@@ -245,7 +243,7 @@ class ComponentRunner
 
 			# initialization worker
 			@worker.set_context(context)
-			@worker.set_callback(@callback)
+			@worker.set_callbacks(@callbacks)
 			@worker.set_args(@options)
 
 			# launching component
@@ -276,8 +274,7 @@ class ComponentRunner
     # :param callback: Callable to handle requests.
     # :type callback: A callable.
     #
-	def run(callback)
-		@callback = callback
+	def run()
 
 		# Apply CLI options to command
 		@options = get_argument_options(@args)
