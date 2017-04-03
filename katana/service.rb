@@ -29,7 +29,7 @@ class ServiceServer < ComponentServer
 
         htransport = payload.get_path("command","arguments","transport") {nil}
         Loggging.log.debug " get_response_meta htransport = #{htransport}"
-        if htransport == nil
+        if htransport.nil?
             return meta
         end
         transport = TransportPayload.new
@@ -37,14 +37,14 @@ class ServiceServer < ComponentServer
 
         # When a download is registered add files flag
         hbody = transport.get_path("body") {nil}
-        Loggging.log.debug " get_response_meta hbody = #{(hbody==nil ? 'nil': hbody)}"
+        Loggging.log.debug " get_response_meta hbody = #{(hbody.nil? ? 'nil': hbody)}"
         if hbody != nil
             meta = @@DOWNLOAD
         end
 
         # Add meta for service call when inter service calls are made
         hcall = transport.get_path("calls", component_name, component_version) {nil}
-        Loggging.log.debug " get_response_meta hcall = #{(hcall==nil ? 'nil': hcall)}"
+        Loggging.log.debug " get_response_meta hcall = #{(hcall.nil? ? 'nil': hcall)}"
         if hcall !=nil
            meta = @@SERVICE_CALL # TODO concat response 'meta += @@SERVICE_CALL'
 

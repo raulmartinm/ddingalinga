@@ -85,6 +85,23 @@ class ComponentServer
         return @cli_args[:compact_names]
     end
 
+
+    # Create a new multipart error stream.
+    # 
+    # :param message: Error message.
+    # :type message: str
+    #
+    # :rtype: list
+    #
+    def create_error_stream(message)
+        meta = ZMQ::Message.new
+        meta.copy_in_bytes([@@EMPTY_META].pack('C*'),1)
+
+        msg = ZMQ::Message.new(commandResultPayload.to_msgpack)
+        return [meta, msg]
+    end
+
+
 	# Create a payload for the error response.
 	#
     # :params exc: The exception raised in user land callback.
@@ -128,6 +145,22 @@ class ComponentServer
     #
     def component_to_payload(command_name, component)
         raise NotImplementedError.new("You must implement component_to_payload.")
+    end
+
+
+    # Update schema registry with new service schemas.
+    # 
+    # :param stream: Mappings stream.
+    # :type stream: bytes
+    #
+    def update_schema_registry(self, mapping_data)
+        Loggging.log.debug "Updating schemas for Services ..."
+        begin
+            @schema_registry.update_registry(mapping_data)
+        ensure
+            Loggging.log.error "Failed to update schemas"
+            Exception.new("Failed to update schemas" 
+        end
     end
 
 	# Process a request payload.
@@ -188,6 +221,9 @@ class ComponentServer
     def run
         Loggging.log.debug "worker = #{component_name()} , Thread = #{Thread.current}"
 
+        # array with packages to response
+        response_data = []
+
         # When compact mode is enabled use long payload field names
         commandPayload = CommandPayload.new        
         commandPayload.set_fieldmappings(compact_names)
@@ -203,35 +239,52 @@ class ComponentServer
             messages = []
             receiver.recvmsgs(messages)
 
-            # 'action'
-            received_action = messages[0]
-            Loggging.log.debug "Received request byte 'action': [#{received_action.copy_out_string}]"
-
-            # 'mappings'
+            # 'mappings' >> Update global schema registry when mappings are sent
             received_mappings = messages[1]
             Loggging.log.debug "Received request byte 'mappings': [#{received_mappings.copy_out_string}]"
+            # TODO Update global schema registry when mappings are sent
+            if !received_mappings.nil?
+                Loggging.log.debug "Update global schema registry when mappings are sent"
+            end
 
-            # 'stream'
-            received_stream = messages[2]
-            Loggging.log.debug "Received request byte: [#{received_stream.copy_out_string}]"
+            # 'acton' >> Get action name
+            received_action = messages[0]
+            Loggging.log.debug "Received request byte 'action': [#{received_action.copy_out_string}]"
+            if !@callbacks.keys?(received_action)
+                error = "Invalid action for component #{@component_title}: '#{received_action}'"
+                Loggging.log.error error
+                response_data = create_error_stream(error)
+            end 
 
-            # unpack message recived
-            commandPayload.set_payload(MessagePack.unpack(received_stream.copy_out_string))
-            Loggging.log.debug "Received commandPayload: [#{commandPayload}]"
+            # 'stream' >> Call request handler and send response back
+            if !response_data.any?
+                # 'stream'
+                received_stream = messages[2]
+                Loggging.log.debug "Received request byte: [#{received_stream.copy_out_string}]"
 
-            # Process message reviced
-            commandResultPayload = process_payload(received_action, commandPayload)
-            Loggging.log.debug "Responser commandResultPayload: [#{commandResultPayload}]"
+                # unpack message recived
+                commandPayload.set_payload(MessagePack.unpack(received_stream.copy_out_string))
+                Loggging.log.debug "Received commandPayload: [#{commandPayload}]"
 
-            # send type of response
-            meta = ZMQ::Message.new
-            meta.copy_in_bytes([get_response_meta(commandPayload)].pack('C*'),1)
-            Loggging.log.debug "Responser meta: [#{meta}]"            
-            receiver.sendmsg(meta,ZMQ::SNDMORE)
+                # Process message reviced
+                commandResultPayload = process_payload(received_action, commandPayload)
+                Loggging.log.debug "Responser commandResultPayload: [#{commandResultPayload}]"
+
+                # send type of response
+                meta = ZMQ::Message.new
+                meta.copy_in_bytes([get_response_meta(commandPayload)].pack('C*'),1)
+                Loggging.log.debug "Responser meta: [#{meta}]"            
+                #receiver.sendmsg(meta,ZMQ::SNDMORE)
+
+                # Send reply back to client
+                crmsg = ZMQ::Message.new(commandResultPayload.to_msgpack)
+                #receiver.sendmsg(crmsg)
+
+                response_data = [meta,crmsg]
+            end
 
             # Send reply back to client
-            crmsg = ZMQ::Message.new(commandResultPayload.to_msgpack)
-            receiver.sendmsg(crmsg)
+            receiver.sendmsgs(response_data)
         end
     end
 end
