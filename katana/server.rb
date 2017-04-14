@@ -97,7 +97,7 @@ class ComponentServer
         meta = ZMQ::Message.new
         meta.copy_in_bytes([@@EMPTY_META].pack('C*'),1)
 
-        msg = ZMQ::Message.new(commandResultPayload.to_msgpack)
+        msg = ZMQ::Message.new(message.to_msgpack)
         return [meta, msg]
     end
 
@@ -240,9 +240,9 @@ class ComponentServer
             receiver.recvmsgs(messages)
 
             # 'acton' >> Get action name
-            received_action = messages[0]
-            Loggging.log.debug "Received request byte 'action': [#{received_action.copy_out_string}]"
-            if !@callbacks.keys?(received_action)
+            received_action = messages[0].copy_out_string
+            Loggging.log.debug "Received request byte 'action': [#{received_action}]"
+            if !@callbacks.has_key?(received_action)
                 error = "Invalid action for component #{self.component_title}: '#{received_action}'"
                 Loggging.log.error error
                 response_data = create_error_stream(error)
@@ -251,19 +251,19 @@ class ComponentServer
             if !response_data.any?
 
                 # 'mappings' >> Update global schema registry when mappings are sent
-                received_mappings = messages[1]
-                Loggging.log.debug "Received request byte 'mappings': [#{received_mappings.copy_out_string}]"
+                received_mappings = messages[1].copy_out_string
+                Loggging.log.debug "Received request byte 'mappings': [#{received_mappings}]"
                 # TODO Update global schema registry when mappings are sent
                 if !received_mappings.nil?
                     Loggging.log.debug "Update global schema registry when mappings are sent"
                 end
 
                 # 'stream' >> Call request handler and send response back
-                received_stream = messages[2]
-                Loggging.log.debug "Received request byte: [#{received_stream.copy_out_string}]"
+                received_stream = messages[2].copy_out_string
+                Loggging.log.debug "Received request byte: [#{received_stream}]"
 
                 # unpack message recived
-                commandPayload.set_payload(MessagePack.unpack(received_stream.copy_out_string))
+                commandPayload.set_payload(MessagePack.unpack(received_stream))
                 Loggging.log.debug "Received commandPayload: [#{commandPayload}]"
 
                 # Process message reviced
@@ -284,6 +284,7 @@ class ComponentServer
             end
 
             # Send reply back to client
+            Loggging.log.debug "Response data 'action' : [#{received_action}]: [#{response_data}]"
             receiver.sendmsgs(response_data)
         end
     end

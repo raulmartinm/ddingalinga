@@ -98,7 +98,7 @@ class ServiceServer < ComponentServer
             nil, # TODO self.source_file()
             self.component_name,
             self.component_version,
-            self.platform_version,
+            self.framework_version,
             self.get_vars,
             self.debug,
 		)
