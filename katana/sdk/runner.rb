@@ -32,9 +32,9 @@ class ComponentRunner
 	# :param help: Help text for the CLI command.
 	# :type help: str
 	#
-	def initialize(componet, worker, help, *args)
-		@worker = worker
+	def initialize(component, worker, help, *args)		
 		@component = component
+		@worker = worker
 		@help = help		
 		@args = args
 

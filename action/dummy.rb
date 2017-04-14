@@ -1,4 +1,4 @@
-require_relative '../sdk/service'
+require_relative '../katana/sdk/service'
 
 #
 # ruby dummy.rb --help

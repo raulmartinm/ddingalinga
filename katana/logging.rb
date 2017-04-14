@@ -34,16 +34,17 @@ end
 # :rtype: str
 def value_to_log_string(value, max_chars=100000)
 
-	if value == nil
-		output = 'NULL'
-	elsif !!value == value
-		output =  if value == true ? 'TRUE' : 'FALSE'
-	elsif value.is_a? String
-		output = value
-    elsif value.is_a? Hash || value.is_a? Array
-		output = serialize(value)
-    else
-        output = value.inspect
+	if value.nil?
+    output = 'NULL'
+	elsif (!!value == value)
+    output =  value == true ? 'TRUE' : 'FALSE'
+	elsif (value.is_a? String)
+    output = value
+  elsif (value.is_a? Hash) || (value.is_a? Array)
+    output = serialize(value)
+  else
+    output = value.inspect
+  end
 
     return output.length >  max_chars ? output[0,max_chars] : output 
 end

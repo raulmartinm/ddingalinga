@@ -10,9 +10,9 @@ file that was distributed with this source code.
 =end
 
 require_relative 'server'
-require_relative '../payload'
-require_relative '../api/action'
-require_relative '../logging'
+require_relative 'payload'
+require_relative './api/action'
+require_relative 'logging'
 
 class ServiceServer < ComponentServer
 
@@ -45,7 +45,7 @@ class ServiceServer < ComponentServer
         # Add meta for service call when inter service calls are made
         hcall = transport.get_path("calls", component_name, component_version) {nil}
         Loggging.log.debug " get_response_meta hcall = #{(hcall.nil? ? 'nil': hcall)}"
-        if hcall !=nil
+        if hcall.nil?
            meta = @@SERVICE_CALL # TODO concat response 'meta += @@SERVICE_CALL'
 
            # Skip call files check when files flag is already in meta

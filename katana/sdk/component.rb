@@ -43,7 +43,7 @@ class Component
     # Calling this method checks command line arguments before
     # component server starts.
     #
-    def run(self)
+    def run
 
         if @runner == nil
             @logger.error "No component runner defined"
@@ -64,7 +64,7 @@ class Component
         end
 
         # Create the global schema registry instance on run
-        SchemaRegistry.new
+        SchemaRegistry.instance
 
         @runner.set_callbacks(@callbacks)
         @runner.run()
@@ -79,7 +79,7 @@ class Component
     #
     def has_resource(name)
         return @resources.key?(name) # Exists key in Hash
-        return @resources.include?(name) # Exists value into Array
+        # return @resources.include?(name) # Exists value into Array
     end
 
 	# Store a resource.

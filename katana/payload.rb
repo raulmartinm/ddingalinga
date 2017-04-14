@@ -343,7 +343,7 @@ class ResponsePayload < Payload
         deep_nest(@name,"version", request.version)
         deep_nest(@name,"status", request.version)
         deep_nest(@name,"body", request.version)
-		if !headers.nil)
+		if !headers.nil?
             deep_nest(@name,"headers", headers)
         end
         return get_payload

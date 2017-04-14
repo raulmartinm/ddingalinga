@@ -58,7 +58,7 @@ class ComponentServer
     end
 
     def component_title
-        return return "'#{component_name}' (#{component_version})"
+        return "'#{component_name}' (#{component_version})"
     end
 
     def framework_version
@@ -153,13 +153,13 @@ class ComponentServer
     # :param stream: Mappings stream.
     # :type stream: bytes
     #
-    def update_schema_registry(self, mapping_data)
+    def update_schema_registry(mapping_data)
         Loggging.log.debug "Updating schemas for Services ..."
         begin
             @schema_registry.update_registry(mapping_data)
         ensure
             Loggging.log.error "Failed to update schemas"
-            Exception.new("Failed to update schemas" 
+            Exception.new("Failed to update schemas")
         end
     end
 
@@ -239,26 +239,26 @@ class ComponentServer
             messages = []
             receiver.recvmsgs(messages)
 
-            # 'mappings' >> Update global schema registry when mappings are sent
-            received_mappings = messages[1]
-            Loggging.log.debug "Received request byte 'mappings': [#{received_mappings.copy_out_string}]"
-            # TODO Update global schema registry when mappings are sent
-            if !received_mappings.nil?
-                Loggging.log.debug "Update global schema registry when mappings are sent"
-            end
-
             # 'acton' >> Get action name
             received_action = messages[0]
             Loggging.log.debug "Received request byte 'action': [#{received_action.copy_out_string}]"
             if !@callbacks.keys?(received_action)
-                error = "Invalid action for component #{@component_title}: '#{received_action}'"
+                error = "Invalid action for component #{self.component_title}: '#{received_action}'"
                 Loggging.log.error error
                 response_data = create_error_stream(error)
             end 
 
-            # 'stream' >> Call request handler and send response back
             if !response_data.any?
-                # 'stream'
+
+                # 'mappings' >> Update global schema registry when mappings are sent
+                received_mappings = messages[1]
+                Loggging.log.debug "Received request byte 'mappings': [#{received_mappings.copy_out_string}]"
+                # TODO Update global schema registry when mappings are sent
+                if !received_mappings.nil?
+                    Loggging.log.debug "Update global schema registry when mappings are sent"
+                end
+
+                # 'stream' >> Call request handler and send response back
                 received_stream = messages[2]
                 Loggging.log.debug "Received request byte: [#{received_stream.copy_out_string}]"
 
