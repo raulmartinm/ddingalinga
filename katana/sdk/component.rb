@@ -78,7 +78,7 @@ class Component
     # :rtype: bool
     #
     def has_resource(name)
-        return @resources.key?(name) # Exists key in Hash
+        return @resources.has_key?(name) # Exists key in Hash
         # return @resources.include?(name) # Exists value into Array
     end
 

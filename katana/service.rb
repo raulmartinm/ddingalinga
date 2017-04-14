@@ -27,7 +27,7 @@ class ServiceServer < ComponentServer
     def get_response_meta(payload)
         meta = @@EMPTY_META
 
-        htransport = payload.get_path("command","arguments","transport") {nil}
+        htransport = payload.get_path("command_reply","result","transport") {nil}
         Loggging.log.debug " get_response_meta htransport = #{htransport}"
         if htransport.nil?
             return meta
@@ -38,8 +38,15 @@ class ServiceServer < ComponentServer
         # When a download is registered add files flag
         hbody = transport.get_path("body") {nil}
         Loggging.log.debug " get_response_meta hbody = #{(hbody.nil? ? 'nil': hbody)}"
-        if hbody != nil
+        if !hbody.nil? 
             meta = @@DOWNLOAD
+        end
+
+        # Add transactions flag when any transaction is registered
+        hTransactions = transport.get_path("transactions") {nil}
+        Loggging.log.debug " get_response_meta hTransactions = #{(hTransactions.nil? ? 'nil': hTransactions)}"
+        if !hTransactions.nil? 
+            meta += @@TRANSACTIONS
         end
 
         # Add meta for service call when inter service calls are made
