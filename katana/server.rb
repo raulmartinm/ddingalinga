@@ -65,7 +65,7 @@ class ComponentServer
         return @cli_args[:framework_version]
 	end
 
-    def get_vars()        
+    def variables        
         return @cli_args[:var]
     end
 
@@ -163,15 +163,18 @@ class ComponentServer
         end
     end
 
-	# Process a request payload.
-	# 
+    # Process a request payload.
+    # 
+    # :param action: Name of action that must process payload.
+    # :type action: str
     # :param payload: A command payload.
-    # :type payload: `CommandPayload`
+    # :type payload: CommandPayload
     # 
     # :returns: A Payload with the component response.
-    #    
+    # 
 	def process_payload(action, payload)
-        if payload.get_path("command") == nil
+
+        if payload.get_path("command").nil?
             Loggging.log.debug "Payload missing command"
             return ErrorPayload.new.init("Internal communication failed")
         end
@@ -180,7 +183,10 @@ class ComponentServer
 
         # Create a component instance using the command payload and
         # call user land callback to process it and get a response component.
-        component = create_component_instance(payload)
+        component = create_component_instance(action, payload)
+        if component.nil?
+            return ErrorPayload.new.init("Internal communication failed")
+        end
 
 
         # Call callback
@@ -204,6 +210,7 @@ class ComponentServer
     # Process error when uses zmq
     #
     def error_check(rc)
+
         if ZMQ::Util.resultcode_ok?(rc)
             false
         else
@@ -219,6 +226,7 @@ class ComponentServer
     # incoming requests.
     #
     def run
+
         Loggging.log.debug "worker = #{component_name()} , Thread = #{Thread.current}"
 
         # array with packages to response

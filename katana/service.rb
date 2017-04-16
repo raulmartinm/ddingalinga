@@ -16,13 +16,13 @@ require_relative 'logging'
 
 class ServiceServer < ComponentServer
 
-	# Name of service action this service handles.
-	# 
-    # :rtype: str
-    #
-	def action
-		return @cli_args[:action]
-	end
+
+    def initialize
+        super()        
+        @return_value = nil
+        @transport = nil
+        @component = nil
+    end
 
     def get_response_meta(payload)
         meta = @@EMPTY_META
@@ -52,8 +52,8 @@ class ServiceServer < ComponentServer
         # Add meta for service call when inter service calls are made
         hcall = transport.get_path("calls", component_name, component_version) {nil}
         Loggging.log.debug " get_response_meta hcall = #{(hcall.nil? ? 'nil': hcall)}"
-        if hcall.nil?
-           meta = @@SERVICE_CALL # TODO concat response 'meta += @@SERVICE_CALL'
+        if !hcall.nil?
+           meta += @@SERVICE_CALL # TODO concat response 'meta += @@SERVICE_CALL'
 
            # Skip call files check when files flag is already in meta
 =begin
@@ -82,34 +82,54 @@ class ServiceServer < ComponentServer
 
 
 	# Create a component instance for current command payload.
-	#
+    #
+    # :param action: Name of action that must process payload.
+    # :type action: str
     # :param payload: Command payload.
     # :type payload: `CommandPayload`
-	# 
+    #
     # :rtype: `Action`
     #
-	def create_component_instance(payload)
+	def create_component_instance(action, payload)
 
 		# Save transport locally to use it for response payload
 		@transport = TransportPayload.new
 		@transport.set_data(payload.get_path("command","arguments","transport"))
+        Loggging.log.debug " create_component_instance transport = #{@transport}"
+        # Create an empty return value
+        @return_value = Payload.new
 
-		paylodParam = Payload.new
-		paylodParam.set_payload(payload.get_path("command","arguments","params"))
-        Loggging.log.debug " create_component_instance paylodParam = #{paylodParam.to_s}"
-
+		params = payload.get_path("command","arguments","params"){[]}
+        Loggging.log.debug " create_component_instance params = #{params}"
+    
 		return Action.new(
-			self.action(),
-            paylodParam,
+			action,
+            params,
             @transport,
+            @component,
             nil, # TODO self.source_file()
             self.component_name,
             self.component_version,
             self.framework_version,
-            self.get_vars,
+            self.variables,
             self.debug,
 		)
-	end
+=begin
+        return Action(
+                    action,
+                    get_path(payload, 'params', []),
+                    self.__transport,
+                    self.__component,
+                    self.source_file,
+                    self.component_name,
+                    self.component_version,
+                    self.framework_version,
+                    variables=self.variables,
+                    debug=self.debug,
+                    return_value=self.__return_value,
+                    )
+=end	
+    end
 
 	# Convert component to a command result payload.
 	#

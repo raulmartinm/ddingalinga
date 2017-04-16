@@ -139,7 +139,7 @@ class HttpRequest
     # :returns: The HTTP param values as a list.
     # :rtype: list
     #
-    def get_query_param_array(self, name, default=nil)
+    def get_query_param_array(name, default=nil)
         return @query[name] || default || []
     end
 
@@ -211,7 +211,7 @@ class HttpRequest
     # :returns: The HTTP param values as a list.
     # :rtype: list
     #
-    def get_post_param_array(self, name, default=nil)
+    def get_post_param_array(name, default=nil)
         # return @post_data.get(name, default or [])
         return @post_data[name] || default || []
     end

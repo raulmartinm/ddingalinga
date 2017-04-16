@@ -113,13 +113,13 @@ class VersionString
             return 0
         end
 
-        for part1, part2 in zip_longest(ver1.split('.'), ver2.split('.')):
+        for part1, part2 in zip_longest(ver1.split('.'), ver2.split('.'))
             # One of the parts is nil
             if part1 == nil || part2 == nil
                 return self.compare_none(part1, part2)
             end
 
-            for sub1, sub2 in zip_longest(part1.split('-'), part2.split('-')):
+            for sub1, sub2 in zip_longest(part1.split('-'), part2.split('-'))
                 # One of the sub parts is nil
                 if sub1 is None || sub2 is nil
                     # Sub parts are different, because one have a

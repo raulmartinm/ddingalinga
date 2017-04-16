@@ -35,7 +35,7 @@ Options:
 	
 =end  
 def bootstrap(action)
-	id = action.get_param("query", "id")
+	id = action.get_param("id")
 	action.set_entity("Hello #{id.get_value()}")
 	return action
 end

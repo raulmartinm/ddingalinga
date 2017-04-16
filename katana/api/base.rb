@@ -88,9 +88,9 @@ class Api
 		return @variables[key] if @variables
     end
 
-	# Gets all component variables.
-	#	
-	# rtype: hash or dict
+	# Determine if component is running in debug mode.
+	#
+	# :rtype: bool
 	#
 	def is_debug
 		return @debug
@@ -158,13 +158,13 @@ class Api
                 version = VersionString(version).resolve(
                     @schema.get_path(name, {}).keys()
                 )
-                payload = @schema.get_path(name, version){nil}
+                payload = @schema.get(name, version){nil}
             rescue KatanaError
                 payload = nil
             end
 =end            
         else
-            payload = @schema.get_path(name, version){nil}
+            payload = @schema.get(name, version){nil}
         end
 
         if payload.nil?

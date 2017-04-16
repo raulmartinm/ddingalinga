@@ -194,13 +194,13 @@ class Payload
 		if (@@DISABLE_FIELD_MAPPINGS)
 			argsn.push(location)
 			argsn.push(name)
-			if (value!=nil)
+			if (!value.nil?)
 				argsn.push(value)
 			end
 		else
 			argsn.push(@@FIELD_MAPPINGS[location])
 			argsn.push(name)
-			if (value!=nil)
+			if (!value.nil?)
 				argsn.push(@@FIELD_MAPPINGS[value])
 			end
 		end
@@ -228,6 +228,10 @@ class Payload
 
 	def set_data(data)
 		self.deep_nest(@name,data)
+	end
+
+	def get_data(*args, &block)
+		return self.get_path(@name, *args, &block)
 	end
 
 	def has_data
@@ -389,14 +393,14 @@ class TransportPayload < Payload
 		deep_nest(@name,"meta","version", version)
         deep_nest(@name,"meta","id", request_id)        
         deep_nest(@name,"meta","datetime", date_time || date_to_str(DateTime.now.new_offset(0)))
-		deep_nest(@name,"meta","origin", origin || [])		
-        deep_nest(@name,"meta","level", 1)
+		deep_nest(@name,"meta","origin", origin || [])
 =begin        
         deep_nest(@name,"meta","gateway", kwargs.get('gateway'))
         if kwargs.get('properties')
             deep_nest(@name,"meta","properties", kwargs['properties'])
          end
 =end
+        deep_nest(@name,"meta","level", 1)
 		return get_payload
 	end
 end
