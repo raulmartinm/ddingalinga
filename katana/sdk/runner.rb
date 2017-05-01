@@ -206,7 +206,7 @@ class ComponentRunner
     # with an exit code.
     # http://zguide.zeromq.org/page:all#Multithreading-with-ZeroMQ (Multithreading with ZeroMQ)
     #
-    def start_componet()
+    def start_componet
 		Loggging.log.debug "Starting component server..."
 
 
@@ -274,7 +274,7 @@ class ComponentRunner
     # :param callback: Callable to handle requests.
     # :type callback: A callable.
     #
-	def run()
+	def run
 
 		# Apply CLI options to command
 		@options = get_argument_options(@args)

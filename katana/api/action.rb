@@ -144,7 +144,7 @@ class Action < Api
         end
 
         Loggging.log.debug "action get_param: name = #{name}"
-        Loggging.log.debug "action get_param: valye= #{@params[name]['value']}"
+        Loggging.log.debug "action get_param: value= #{@params[name]['value']}"
         Loggging.log.debug "action get_param: type = #{@params[name]['type']}"
         return Param.new(
             name,

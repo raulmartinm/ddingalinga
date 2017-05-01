@@ -22,7 +22,6 @@ class ParamSchema
         @name = name
         @payload = Payload.new(payload)
     end
-
     
     # Get parameter name.
     #
@@ -47,7 +46,6 @@ class ParamSchema
     def get_format
         return @payload.get_path("format"){""}
     end
-
     
     # Get format for the parameter if the type property is set to "array".
     # 
@@ -62,7 +60,7 @@ class ParamSchema
     # :rtype: str
     #
     def get_array_format
-        return @payload.get('array_format', 'csv')
+        return @payload.get_path("array_format"){"csv"}
     end
 
     # Get ECMA 262 compliant regular expression to validate the parameter.
@@ -86,7 +84,7 @@ class ParamSchema
     # :rtype: bool
     #
     def has_default_value
-        return @payload.path_exists("default")
+        return @payload.path_exists("default_value")
     end
 
     # Get default value for parameter.
@@ -94,7 +92,7 @@ class ParamSchema
     # :rtype: str
     #
     def get_default_value
-        return @payload.get_path("default"){""} 
+        return @payload.get_path("default_value"){""} 
     end
 
     # Check if parameter is required.
@@ -112,31 +110,19 @@ class ParamSchema
     # :rtype: list
     #
     def get_items
-        if self.get_type() != "array"
-            return ""
+        if self.get_type != "array"
+            return {}
         end
-
-        if !@payload.path_exists("items")
-            return ""
-        end
-
-        begin
-            # Items must be a valid JSON string
-            return json.deserialize(@payload.get_path("items"))
-        rescue Exception => exc
-            Loggging.log.debug "Value for 'items' is not valid JSON"
-            return ""
-        end
-=end
+        return @payload.get_path("items"){{}}
+        
     end
-
     
     # Get maximum value for parameter.
     #
     # :rtype: int
     #
     def get_max
-        return @payload.get_path("maximum"){10000} # sys.maxsize
+        return @payload.get_path("max"){10000} # sys.maxsize
     end
 
     # Check if max value is inclusive.
@@ -146,11 +132,11 @@ class ParamSchema
     # :rtype: bool
     #
     def is_exclusive_max
-        if !@payload.path_exists("maximum")
+        if !@payload.path_exists("max")
             return false
         end
 
-        return @payload.get_path("exclusive_maximum"){false}
+        return @payload.get_path("exclusive_max"){false}
     end
 
     # Get minimum value for parameter.
@@ -158,9 +144,8 @@ class ParamSchema
     # :rtype: int
     #
     def get_min
-        return @payload.get_path("maximum"){-10001} # -sys.maxsize - 1
+        return @payload.get_path("min"){-10001} # -sys.maxsize - 1
     end
-
     
     # Check if minimum value is inclusive.
     #
@@ -169,12 +154,11 @@ class ParamSchema
     # :rtype: bool
     #
     def is_exclusive_min
-        if !@payload.path_exists("minimum")
+        if !@payload.path_exists("min")
             return false
-
-        return @payload.get_path("exclusive_minimum"){false}
+        end
+        return @payload.get_path("exclusive_min"){false}
     end
-
     
     # Get max length defined for the parameter.
     # 
@@ -182,9 +166,8 @@ class ParamSchema
     # 
     # :rtype: int
     def get_max_length
-        return @payload.get_path("maximum_length"){-1}
+        return @payload.get_path("max_length"){-1}
     end
-
     
     # Get minimum length defined for the parameter.
     #
@@ -193,9 +176,8 @@ class ParamSchema
     # :rtype: int
     #
     def get_min_length
-        return @payload.get_path("minimum_length"){-1}
+        return @payload.get_path("min_length"){-1}
     end
-
     
     # Get maximum number of items allowed for the parameter.
     # 
@@ -204,13 +186,11 @@ class ParamSchema
     # :rtype: int
     #
     def get_max_items
-        if self.get_type() != "array"
+        if self.get_type != "array"
             return -1
         end
-
-        return @payload.get_path("maximum_items"){-1}
+        return @payload.get_path("max_items"){-1}
     end
-
     
     # Get minimum number of items allowed for the parameter.
     # 
@@ -219,11 +199,11 @@ class ParamSchema
     # :rtype: int
     #
     def get_min_items
-        if self.get_type() != "array"
+        if self.get_type != "array"
             return -1
         end
 
-        return @payload.get_path("minimum_items"){-1}
+        return @payload.get_path("min_items"){-1}
     end
 
     # Check if param must contain a set of unique items.
@@ -238,20 +218,9 @@ class ParamSchema
     #
     # :rtype: list
     #
-    def get_enum
-        if !@payload.path_exists("enum")
-            return ""
-        end
-
-        begin
-            # Items must be a valid JSON string
-            return json.deserialize(@payload.get_path("enum"))
-        rescue Exception => exc
-            Loggging.log.debug "Value for 'enum' is not valid JSON"
-            return ""
-        end
+    def get_enum        
+        return @payload.get_path("enum"){[]}
     end
-
     
     # Get value that parameter must be divisible by.
     #
@@ -268,13 +237,14 @@ class ParamSchema
     # :rtype: HttpParamSchema
     #
     def get_http_schema
-        return HttpParamSchema.new(self.get_name(), @payload.get_path("http"){{}})
+        return HttpParamSchema.new(self.get_name, @payload.get_path("http"){{}})
     end
+
+end
 
 # HTTP semantics of a parameter schema in the platform.
 #
 class HttpParamSchema
-
 
     def initialize(name, payload)
         @name = name
@@ -305,3 +275,5 @@ class HttpParamSchema
     def get_param
         return @payload.get_path("param"){@name}
     end
+
+end

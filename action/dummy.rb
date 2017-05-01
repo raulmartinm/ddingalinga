@@ -1,18 +1,13 @@
 require_relative '../katana/sdk/service'
 
 #
-# ruby dummy.rb --help
-# ruby dummy.rb --name dummy --version 1.0.0 --platform-version 1.0.0-alpha.12 --action dummy --component service --tcp 7001  --var "workers=5" --debug
-# ./katana service action --standalone --config action-dummy-service-ruby.xml --debug --timeout 100 --name dummy --query "id=Katana"
-# ruby dummy.rb --name dummy --version 1.0.0 --platform-version 1.0.0-alpha.12 --action dummy --component service --tcp 7001  --var "workers=5" --disable-compact-names true --debug
-# ./katana service action --standalone --config action-dummy-service-ruby.xml --disable-compact-names --debug --timeout 100 --name dummy --parameter "id=Katana"
-
-# ruby dummy.rb --name dummy --version 1.0.0 --framework-version 1.0.0 --component service --tcp 7001  --var "workers=5" --disable-compact-names true --debug
+# Step 1
+#  ruby dummy.rb --name dummy --version 1.0.0 --framework-version 1.0.0 --component service --tcp 7001  --var "workers=5" --disable-compact-names true --debug
+# Step 2
+#  ./katana service action --standalone --config action-dummy-service-ruby.xml --disable-compact-names --debug --timeout 100 --name dummy --parameter "id=Katana"
 
 
 =begin
-
-./katana service action --standalone --config action-dummy-service-ruby.xml --disable-compact-names --debug --timeout 100 --name dummy --parameter "id=Katana"
 	
 ./katana service action --help
 Usage: katana service action [OPTIONS]

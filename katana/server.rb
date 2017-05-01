@@ -293,7 +293,9 @@ class ComponentServer
 
             # Send reply back to client
             Loggging.log.debug "Response data 'action' : [#{received_action}]: [#{response_data}]"
-            receiver.sendmsgs(response_data)
+            #receiver.sendmsgs(response_data)
+            receiver.sendmsg(response_data[0],ZMQ::SNDMORE)
+            receiver.sendmsg(response_data[1])
         end
     end
 end

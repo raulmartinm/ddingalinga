@@ -28,7 +28,7 @@ class FileSchema
     #
     # :rtype: str
     #
-    def get_name()
+    def get_name
         return @name
     end
 
@@ -36,7 +36,7 @@ class FileSchema
     #
     # :rtype: str
     #
-    def get_mime()
+    def get_mime
         return @payload.get_path("mime"){"text/plain"} 
     end
 
@@ -44,7 +44,7 @@ class FileSchema
     #
     # :rtype: bool
     #
-    def is_required()
+    def is_required
         return @payload.get_path("required"){false}
     end
 
@@ -54,7 +54,7 @@ class FileSchema
     #
     # :rtype: int
     #
-    def get_max()
+    def get_max
         return @payload.get_path("max"){10000}
     end
 
@@ -64,7 +64,7 @@ class FileSchema
     #
     # :rtype: bool
     #
-    def is_exclusive_max()
+    def is_exclusive_max
         if not @payload.path_exists("max")
             return false
         end
@@ -78,7 +78,7 @@ class FileSchema
     #
     # :rtype: int
     # 
-    def get_min()
+    def get_min
         return @payload.get_path("min"){0}
     end
 
@@ -88,7 +88,7 @@ class FileSchema
     #
     # :rtype: bool
     #
-    def is_exclusive_min()
+    def is_exclusive_min
         if not @payload.path_exists("min")
             return false
         end
@@ -100,7 +100,7 @@ class FileSchema
     #
     # :rtype: HttpFileSchema
     #
-    def get_http_schema()
+    def get_http_schema
         return HttpFileSchema.new(self.get_name(), @payload.get_path("http"){{}})
     end
 
@@ -119,7 +119,7 @@ class HttpFileSchema
     #
     # :rtype: bool
     #
-    def is_accessible()
+    def is_accessible
         return @payload.get_path("gateway"){true}
     end
 
@@ -127,7 +127,7 @@ class HttpFileSchema
     #
     # :rtype: str
     #
-    def get_param()
+    def get_param
         return @payload.get_path("param"){@name}
     end
 end

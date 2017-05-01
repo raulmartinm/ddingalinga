@@ -10,6 +10,7 @@ file that was distributed with this source code.
 
 =end
 require_relative '../../utils'
+require_relative '../file'
 require 'uri'
 
 
@@ -17,8 +18,8 @@ require 'uri'
 # HTTP request class.
 #
 class HttpRequest
-	def initialize(method, url, protocol_version="1.1",query={},headers={}, post_data={}, body="",files={})
-		@method = method.uppcase
+	def initialize(method, url, protocol_version="1.1", query={}, headers={}, post_data={}, body="", files={})
+		@method = method.upcase
 		@url = url
 		@protocol_version = protocol_version
         @query = query
@@ -31,6 +32,26 @@ class HttpRequest
         @parsed_url = URI.parse(@url)
 	end
 
+    # Setters
+    def set_protocol_version(protocol_version)
+        @protocol_version = protocol_version
+    end
+    def set_query(query)
+        @query = query
+    end 
+    def set_headers(headers)
+        @headers = headers
+    end 
+    def set_post_data(post_data)
+        @post_data = post_data
+    end 
+    def set_body(body)
+        @body = body
+    end 
+    def set_files(files)
+        @files = files
+    end
+
     # Determine if the request used the given HTTP method.
     # 
     # Returns True if the HTTP method of the request is the same
@@ -42,7 +63,7 @@ class HttpRequest
     # :rtype: bool
     #
 	def is_method(method)
-        return @method == method.uppcase
+        return @method == method.upcase
 	end
 
 
@@ -70,7 +91,7 @@ class HttpRequest
     # :rtype: str
     #
 	def get_url_scheme
-        return @arsed_url.scheme
+        return @parsed_url.scheme
 	end
 
 
@@ -81,7 +102,7 @@ class HttpRequest
     # :rtype: str
     #
 	def get_url_host
-        return @arsed_url.host
+        return @parsed_url.host
 	end
 
 	# Get request URL path.
@@ -105,7 +126,7 @@ class HttpRequest
     # :rtype: bool
     #
     def has_query_param(name)
-        return !query[name].nil?
+        return !@query[name].nil?
     end
 
 
@@ -194,8 +215,7 @@ class HttpRequest
     # :rtype: str
     #
     def get_post_param(name, default="")
-        # return @post_data.get(name, (default, ))[0]
-        return !@post_data[name].nil? ? @query[name][0] : default
+        return !@post_data[name].nil? ? @post_data[name][0] : default
     end
 
 
@@ -212,7 +232,6 @@ class HttpRequest
     # :rtype: list
     #
     def get_post_param_array(name, default=nil)
-        # return @post_data.get(name, default or [])
         return @post_data[name] || default || []
     end
 
@@ -283,7 +302,7 @@ class HttpRequest
     # Returns the HTTP header with the given name, or and empty
     # string if not defined.
 	#
-    # A comma separated list of values ir returned when header
+    # Fist item is returned when header
     # has multiple values.
 	#
     # :param name: The HTTP header.
@@ -297,7 +316,7 @@ class HttpRequest
         	return default
         end
 
-    	return @headers[name].join(", ")
+    	return @headers[name][0]
     end
 
     

@@ -18,19 +18,14 @@ class HttpResponse
         self.set_status(status_code, status_text)
         self.set_protocol_version(protocol_version)
         self.set_body(body)
-        @headers = {}
-
-=begin
-        # Set response headers
-        headers = headers
-        if !headers.nil?
-            
-            for name, value in headers:
-                self.set_header(name, value)
-            end
-        end
-=end
+        self.set_headers(headers)
     end
+
+    # setters    
+    def set_headers(headers)
+        @headers = headers
+    end
+
 
     # Determine if the response uses the given HTTP version.
     # 
@@ -140,17 +135,14 @@ class HttpResponse
     #
     # :rtype: str
     #
-    def get_header(name)
-=begin
-    
-        values = self.__headers.get(name)
-        if not values:
+    def get_header(name)    
+        values = @headers[name]
+        if values.nil?
             return ''
+        end
 
         # Get first header value
-        return values[0]   
-=end        
-        return @headers[name]
+        return values[0]
     end
 
     
@@ -170,12 +162,17 @@ class HttpResponse
     # :param name: The HTTP header.
     # :type name: str
     # :param value: The header value.
-    # :type value: str
+    # :type value: array
     #
     # :rtype: HttpResponse
     #
     def set_header(name, value)
-        @headers[name] = value
+        if !@headers[name].nil?
+            @headers[name] = @headers[name] + value
+        else
+           @headers[name] = value 
+        end
+        return self
     end
 
     # Determines if the response has content.
@@ -209,6 +206,7 @@ class HttpResponse
     #
     def set_body(content=nil)
         @body = content || ""
+        return self
     end
 
 end
