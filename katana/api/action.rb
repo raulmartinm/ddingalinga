@@ -265,29 +265,48 @@ class Action < Api
     end
 =end
 
-    # Sets the entity data.
-    #
     # Sets an object as the entity to be returned by the action.
     #
-    #:param entity: The entity object.
-    #:type entity: dict    
+    # Entity is validated when validation is enabled for an entity
+    # in the Service config file.
+    #
+    # :param entity: The entity object.
+    # :type entity: dict
+    #
+    # :raises: TypeError
+    #
+    # :rtype: Action   
     #
     def set_entity(entity)
 
         Loggging.log.debug "action set_entity: name = #{self.get_name}, version = #{self.get_version}, action_name = #{self.get_action_name}"
-		@transport.deep_nest("data",self.get_name, self.get_version, self.get_action_name, entity)
+        if !(entity.is_a? Hash)
+            raise TypeError.new("Entity must be an dict o hash")
+        end
+		@transport.deep_nestdata("data",
+            @gateway[1],
+            self.get_name, 
+            self.get_version, 
+            self.get_action_name, 
+            entity)
+        return self
 
-        #if not isinstance(entity, dict):
-        #    raise TypeError('Entity must be an dict')
+=begin
+        if not isinstance(entity, dict):
+            raise TypeError('Entity must be an dict')
 
-        #return self.__transport.push(
-        #    'data/{}/{}/{}'.format(
-        #        self.get_name(),
-        #        self.get_version(),
-        #        self.get_action_name(),
-        #        ),
-        #    entity,
-        #    )
+        self.__transport.push(
+            'data|{}|{}|{}|{}'.format(
+                self.__gateway[1],
+                nomap(self.get_name()),
+                self.get_version(),
+                nomap(self.get_action_name()),
+                ),
+            entity,
+            delimiter='|',
+            )
+        return self
+=end
     end
 
     # Sets the collection data.
@@ -298,7 +317,20 @@ class Action < Api
     # :type collection: list   
     def set_collection(collection)
         Loggging.log.debug "action set_collection: name = #{self.get_name}, version = #{self.get_version}, action_name = #{self.get_action_name}"
-		@transport.deep_nest("data",self.get_name, self.get_version, self.get_action_name, collection)
+        if !(collection.is_a? Array)
+            raise TypeError.new("Collection must be a list or array")
+        end
+        collection.each do |entity|
+            if !(entity.is_a? Hash)
+                raise TypeError.new("Entity must be an dict o hash")
+            end
+        end
+		@transport.deep_nestdata("data",
+            @gateway[1],
+            self.get_name,
+            self.get_version,
+            self.get_action_name,
+            collection)
 
         #if not isinstance(collection, list):
         #    raise TypeError('Collection must be a list')

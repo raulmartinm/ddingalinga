@@ -63,7 +63,9 @@ class Payload
 	    'path_delimiter' => 'd',
 	    'deferred_calls' => 'dc',
 	    'deprecated' => 'D',
+	    'duration' => 'D',
 	    'allow_empty' => 'e',
+	    'end_time' => 'e',
 	    'entity_path' => 'e',
 	    'errors' => 'e',
 	    'entity' => 'E',
@@ -132,13 +134,14 @@ class Payload
 	    'rollback' => 'r',
 	    'remote_calls' => 'rc',
 	    'response' => 'R',
-	    'return' => 'R',
+	    'return' => 'rv',
 	    'schema' => 's',
 	    'schemes' => 's',
 	    'scope' => 's',
 	    'service' => 's',
 	    'shared' => 's',
 	    'size' => 's',
+	    'start_time' => 's',
 	    'status' => 's',
 	    'swap' => 's',
 	    'system' => 's',
@@ -269,15 +272,15 @@ class ErrorPayload < Payload
 	end
 
 	def init(message=nil, code=nil, status=nil)
-		if  message.nil?
+		if !message.nil?
 			deep_nest(@name, "message", message)
 		end
 
-		if code.nil?
+		if !code.nil?
 			deep_nest(@name, "code", code)
 		end
 
-		if status.nil?
+		if !status.nil?
 			deep_nest(@name, "status", status)
 		end
 
@@ -341,27 +344,6 @@ class HttpRequestPayload < Payload
     end
 end
 
-
-# Class definition for response payloads.
-#
-class ResponsePayload < Payload
-
-    def initialize
-		super
-		@name = "response"
-	end
-
-	def init(version=nil, status=nil, body=nil, headers=nil)
-        deep_nest(@name,"version", request.version)
-        deep_nest(@name,"status", request.version)
-        deep_nest(@name,"body", request.version)
-		if !headers.nil?
-            deep_nest(@name,"headers", headers)
-        end
-        return get_payload
-    end
-end
-
 # Class definition for service call payloads.
 #
 class ServiceCallPayload < Payload
@@ -378,6 +360,29 @@ class ServiceCallPayload < Payload
         deep_nest(@name,"params", params || [])
         return get_payload
 	end
+end
+
+# Class definition for response payloads.
+#
+class ResponsePayload < Payload
+
+    def initialize
+		super
+		@name = "response"
+	end
+
+	def init(version=nil, status=nil, body=nil, headers=nil, return_value=nil)
+        deep_nest(@name,"version", version || "1.1")
+        deep_nest(@name,"status", status || "200 OK")
+        deep_nest(@name,"body", body || "")
+        if !headers.nil?
+            deep_nest(@name,"headers", headers)
+        end
+        if !return_value.nil?
+            deep_nest(@name,"return", return_value)
+        end
+        return get_payload
+    end
 end
 
 # Class definition for transport payloads.
@@ -423,9 +428,9 @@ class CommandPayload < Payload
 		deep_nest(@name, "arguments", nil)
 	end
 
-	def init(name, scope, args=nil)		
+	def init(name, scope, args=nil)
 		deep_nest(@name, "name", name)
-		deep_nest(@name, "scope", scope) # TODO [to ask -> payload.set('meta/scope', scope)]
+		deep_nest("meta", "scope", scope)
 		if !args.nil?
 			deep_nest(@name, "arguments", args)
 		end

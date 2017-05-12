@@ -45,6 +45,18 @@ class Transport
 		return @transport.get_path("meta","origin")
 	end
 
+    
+    # Get origin Service execution time.
+    #
+    # The execution time in milliseconds is the time that was spent by
+    # the Service that was the origin of the request.
+    #
+    # :rtype: int
+    #
+    def get_origin_duration
+         return @transport.get_path("meta","duration", name) { 0 }
+    end
+
 
 	# Get a userland property.
 	#

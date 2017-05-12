@@ -97,7 +97,10 @@ class ComponentServer
         meta = ZMQ::Message.new
         meta.copy_in_bytes([@@EMPTY_META].pack('C*'),1)
 
-        msg = ZMQ::Message.new(message.to_msgpack)
+        Loggging.log.debug "create_error_stream message: #{message}"
+        errorPayload = ErrorPayload.new.init(message)
+        Loggging.log.debug "create_error_stream payload: #{errorPayload}"
+        msg = ZMQ::Message.new(errorPayload.to_msgpack) # return hash
         return [meta, msg]
     end
 
@@ -201,8 +204,9 @@ class ComponentServer
         end
 
         # Convert callback result to a command payload
-        Loggging.log.debug " process_payload replay: #{CommandResultPayload.new.init(command_name,payload)}"
-        return CommandResultPayload.new.init(command_name,payload) # return hash
+        commandResultPayload = CommandResultPayload.new.init(command_name,payload) # return hash
+        Loggging.log.debug " process_payload replay: #{commandResultPayload}"
+        return commandResultPayload 
                
 	end
 
