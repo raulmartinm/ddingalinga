@@ -265,6 +265,48 @@ class Action < Api
     end
 =end
 
+
+=begin
+    
+    def set_return(self, value):
+        """Sets the value to be returned as "return value".
+
+        Supported value types: bool, int, float, str, list, dict and None.
+
+        :param value: A supported return value.
+        :type value: object
+
+        :raises: UndefinedReturnValueError
+        :raises: ReturnTypeError
+
+        :rtype: Action
+
+        """
+
+        service = self.get_name()
+        version = self.get_version()
+        action = self.get_action_name()
+
+        # When runnong from CLI allow any return values
+        if not self.__action_schema:
+            self.__return_value.set('return', value)
+            return self
+
+        if not self.__action_schema.has_return():
+            raise UndefinedReturnValueError(service, version, action)
+
+        # Check that value type matches return type
+        if value is not None:
+            rtype = self.__action_schema.get_return_type()
+            if not isinstance(value, RETURN_TYPES[rtype]):
+                raise ReturnTypeError(service, version, action)
+
+        self.__return_value.set('return', value)
+        return self
+
+=end
+
+
     # Sets an object as the entity to be returned by the action.
     #
     # Entity is validated when validation is enabled for an entity
@@ -331,6 +373,7 @@ class Action < Api
             self.get_version,
             self.get_action_name,
             collection)
+        return self
 
         #if not isinstance(collection, list):
         #    raise TypeError('Collection must be a list')
@@ -347,6 +390,31 @@ class Action < Api
         #        ),
         #    collection,            
         #    )
+    end
+
+    # Adds an error for the current Service.
+    # 
+    # Adds an error object to the Transport with the specified message.
+    # If the code is not set then 0 is assumed. If the status is not
+    # set then 500 Internal Server Error is assumed.
+    # 
+    # :param message: The error message.
+    # :type message: str
+    # :param code: The error code.
+    # :type code: int
+    # :param status: The HTTP status message.
+    # :type status: str
+    # 
+    # :rtype: Action
+    # 
+    def error(message, code=nil, status=nil)
+        Loggging.log.debug "action set_error: name = #{self.get_name}, version = #{self.get_version}, action_name = #{self.get_action_name}"
+        @transport.deep_nestdata("errors",
+            @gateway[1],
+            self.get_name,
+            self.get_version,            
+            ErrorPayload.new.int(message, code, status))
+        return self
     end
 
 end

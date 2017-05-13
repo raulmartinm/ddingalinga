@@ -150,7 +150,12 @@ class ServiceServer < ComponentServer
         # Add error to transport and return transport
         @transport = TransportPayload.new
         @transport.set_data(payload.get_path("command","arguments","transport"))        
-        @transport.deep_nestdata("errors",action.get_name,action.get_version,ErrorPayload.new.init(exc.to_s))        
+        @transport.deep_nestdata(
+            "errors",
+            @transport.get_data("meta","gateway")[1],
+            action.get_name,
+            action.get_version,
+            ErrorPayload.new.init(exc.to_s))        
         return @transport.get_payload
      end
 end
