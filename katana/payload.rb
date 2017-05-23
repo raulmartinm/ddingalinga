@@ -183,7 +183,7 @@ class Payload
 
 	def get_path(*args, &block)
 		raise ArgumentError.new("wrong number of arguments (0 for 1..n)") if args.empty?
-		
+
 		if (@@DISABLE_FIELD_MAPPINGS)
 			return @payload.deep_fetch(*args, &block)
 		else			
@@ -196,7 +196,7 @@ class Payload
 	end
 
 	def path_exists(*args)
-		return !get_path(*args){nil}.nil?
+		return !self.get_path(*args){nil}.nil?
 	end		
 
 
@@ -232,9 +232,19 @@ class Payload
 		@payload.merge!((argsn + [value]).reverse.reduce { |s,e| { e => s } }) { |k,o,n| o.merge(n) }
 	end
 
-	def deep_nestdata(*args, value)
+	def set_value(*args, value)
 		args.unshift(@name)
 		self.deep_nest(*args,value)
+	end
+
+	def push_value(*args, value)
+		args.unshift(@name)				
+		data = []
+		if self.path_exists(*args)
+			data = self.get_path(*args){[]}
+		end		
+		data.push(value)
+		self.deep_nest(*args,data)
 	end
 
 	def set_data(data)

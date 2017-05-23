@@ -4,7 +4,7 @@ require_relative '../katana/sdk/service'
 # Step 1
 #     ruby dummy.rb --name dummy --version 1.0.0 --framework-version 1.0.14 --component service --tcp 7001  --var "workers=5" --disable-compact-names true --debug
 # Step 2
-#     ./katana service action --standalone --config action-dummy-service-ruby.xml --disable-compact-names --debug --timeout 100 --name dummy --parameter "id=Katana"
+#     KATANA_DEV=1 ./katana service action --standalone --config action-dummy-service-ruby.xml --disable-compact-names --debug --timeout 100 --name dummy --parameter "id=Katana"
 #  error:
 #     ./katana service action --standalone --config action-dummy-service-ruby-2.xml --disable-compact-names --debug --timeout 100 --name dummy2 --parameter "id=Katana" 
 
@@ -33,7 +33,8 @@ Options:
 =end  
 def bootstrap(action)
 	id = action.get_param("id")	
-  action.set_entity({"echo" => "Hello #{id.get_value()}"})
+  action.set_entity({"id" => "Hello #{id.get_value()}"})
+  # action.set_entity({"echo2" => "Hello2 #{id.get_value()}"})
   # action.set_entity( "Hello #{id.get_value()}") # Error TypeError not valid
 	return action
 end

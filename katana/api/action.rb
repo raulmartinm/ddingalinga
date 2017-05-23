@@ -115,7 +115,7 @@ class Action < Api
         if !(value.is_a? String)
             raise TypeError.new("Value is not a string'")
         end
-        @transport.deep_nestdata("meta","properties",name,value)
+        @transport.set_vale("meta","properties",name,value)
         return self
     end
 
@@ -325,30 +325,13 @@ class Action < Api
         if !(entity.is_a? Hash)
             raise TypeError.new("Entity must be an dict o hash")
         end
-		@transport.deep_nestdata("data",
+		@transport.push_value("data",
             @gateway[1],
             self.get_name, 
             self.get_version, 
             self.get_action_name, 
             entity)
         return self
-
-=begin
-        if not isinstance(entity, dict):
-            raise TypeError('Entity must be an dict')
-
-        self.__transport.push(
-            'data|{}|{}|{}|{}'.format(
-                self.__gateway[1],
-                nomap(self.get_name()),
-                self.get_version(),
-                nomap(self.get_action_name()),
-                ),
-            entity,
-            delimiter='|',
-            )
-        return self
-=end
     end
 
     # Sets the collection data.
@@ -367,29 +350,13 @@ class Action < Api
                 raise TypeError.new("Entity must be an dict o hash")
             end
         end
-		@transport.deep_nestdata("data",
+		@transport.push_value("data",
             @gateway[1],
             self.get_name,
             self.get_version,
             self.get_action_name,
             collection)
         return self
-
-        #if not isinstance(collection, list):
-        #    raise TypeError('Collection must be a list')
-
-        #for entity in collection:
-        #    if not isinstance(entity, dict):
-        #        raise TypeError('Entity must be an dict')
-
-        #return self.__transport.push(
-        #    'data/{}/{}/{}'.format(
-        #        self.get_name(),
-        #        self.get_version(),
-        #        self.get_action_name(),
-        #        ),
-        #    collection,            
-        #    )
     end
 
     # Adds an error for the current Service.
@@ -409,7 +376,7 @@ class Action < Api
     # 
     def error(message, code=nil, status=nil)
         Loggging.log.debug "action set_error: name = #{self.get_name}, version = #{self.get_version}, action_name = #{self.get_action_name}"
-        @transport.deep_nestdata("errors",
+        @transport.set_value("errors",
             @gateway[1],
             self.get_name,
             self.get_version,            
