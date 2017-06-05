@@ -33,6 +33,7 @@ Options:
 =end  
 def bootstrap(action)
 	id = action.get_param("id")	
+  # action.set_entity({})
   action.set_entity({"id" => "Hello #{id.get_value()}"})
   # action.set_entity({"echo2" => "Hello2 #{id.get_value()}"})
   # action.set_entity( "Hello #{id.get_value()}") # Error TypeError not valid

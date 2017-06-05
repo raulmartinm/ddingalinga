@@ -96,12 +96,14 @@ class ServiceServer < ComponentServer
 		@transport = TransportPayload.new
 		@transport.set_data(payload.get_path("command","arguments","transport"))
         Loggging.log.debug " create_component_instance transport = #{@transport}"
+
         # Create an empty return value
         @return_value = Payload.new
 
 		params = payload.get_path("command","arguments","params"){[]}
         Loggging.log.debug " create_component_instance params = #{params}"
-    
+        params = params.map {|p| ParamPayload.new.set_data(p)}
+
 		return Action.new(
 			action,
             params,
@@ -112,6 +114,7 @@ class ServiceServer < ComponentServer
             self.component_version,
             self.framework_version,
             self.variables,
+            self.compact_names,
             self.debug,
 		)
 =begin

@@ -249,6 +249,7 @@ class Payload
 
 	def set_data(data)
 		self.deep_nest(@name,data)
+		return self
 	end
 
 	def get_data(*args, &block)
@@ -461,6 +462,24 @@ class CommandResultPayload < Payload
 	def init(name, result=nil)		
 		deep_nest(@name, "name", name)
 		deep_nest(@name, "result", result)		
+		return get_payload
+	end
+end
+
+
+# Class definition for param payloads.
+#
+class ParamPayload < Payload
+
+	def initialize
+		super
+		@name = "param"
+	end
+
+	def init(name, value, type, args=nil)
+		deep_nest(@name, "name", name)
+		deep_nest(@name, "value", value)
+		deep_nest(@name, "type", type)
 		return get_payload
 	end
 end

@@ -65,8 +65,12 @@ class ComponentServer
         return @cli_args[:framework_version]
 	end
 
-    def variables        
+    def variables
         return @cli_args[:var]
+    end
+
+    def compact_names
+        return @cli_args[:compact_names]
     end
 
 	# Check if debug is enabled for current component.

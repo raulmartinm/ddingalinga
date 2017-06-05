@@ -13,6 +13,7 @@ file that was distributed with this source code.
 require_relative 'base'
 require_relative 'param'
 require_relative '../logging'
+require_relative '../payload'
 require_relative '../errors'
 
 
@@ -35,9 +36,9 @@ end
 class Action < Api
 
 	def initialize(action, params, transport, *args)
-		super(*args) # (component, path, name, version, framework_version, variables=nil, debug=false)
+		super(*args) # (component, path, name, version, framework_version, variables=nil, compact_names=false, debug=false)
 		@action = action
-		@params = Hash[params.map { |p| [p["name"], p] }]
+		@params = Hash[params.map { |p| [p.get_data("name"), p] }]
 		@transport = transport
         @gateway = transport.get_data("meta","gateway")
 
@@ -144,12 +145,12 @@ class Action < Api
         end
 
         Loggging.log.debug "action get_param: name = #{name}"
-        Loggging.log.debug "action get_param: value= #{@params[name]['value']}"
-        Loggging.log.debug "action get_param: type = #{@params[name]['type']}"
+        Loggging.log.debug "action get_param: value= #{@params[name].get_data('value')}"
+        Loggging.log.debug "action get_param: type = #{@params[name].get_data('type')}"
         return Param.new(
             name,
-            @params[name]["value"],
-            @params[name]["type"],
+            @params[name].get_data("value"),
+            @params[name].get_data("type"),
             true
         )
     end
@@ -163,8 +164,8 @@ class Action < Api
         return @params.map { |p| 
             Param.new(
                 name,
-                p[name]["value"],
-                p[name]["type"],
+                @params[name].get_data("value"),
+                @params[name].get_data("type"),
                 true
             )
         }

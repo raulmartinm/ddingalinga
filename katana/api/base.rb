@@ -24,13 +24,14 @@ end
 #
 class Api
 	
-	def initialize(component, path, name, version, framework_version, variables=nil, debug=false)
+	def initialize(component, path, name, version, framework_version, variables=nil, compact_names=false, debug=false)
 		@component = component
 		@path = path
 		@name = name
 		@version = version
 		@framework_version = framework_version
 		@variables = variables
+		@compact_names = compact_names
 		@debug = debug
 		@schema = get_schema_registry()
 	end
@@ -87,6 +88,14 @@ class Api
 	def get_variable(key)
 		return @variables[key] if @variables
     end
+
+	# Determine if component is compact_names
+	#
+	# :rtype: bool
+	#
+	def is_compact_names
+		return @compact_names
+	end
 
 	# Determine if component is running in debug mode.
 	#
@@ -182,6 +191,7 @@ class Api
         version:#@version,\n
         framework_version:#@framework_version,\n
         variables:#@variables,\n
+        compact_names:#@compact_names,\n
         debug:#@debug)"
 	end
 end
