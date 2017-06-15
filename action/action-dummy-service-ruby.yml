@@ -1,0 +1,18 @@
+"@context": urn:katana:service
+name: dummy
+version: "0.1"
+http-base-path: /0.1
+info:
+  title: Example Dummy Service
+engine:
+  runner: urn:katana:runner:ruby2
+  path: ../action/dummy.rb
+  tcp: 7001  
+action:
+  - name: dummy
+    http-path: /dummy/{id}
+    param:
+      - name: id
+        type: integer
+        http-input: path
+        required: true

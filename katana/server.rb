@@ -14,6 +14,7 @@ require 'msgpack'
 require 'deep_fetch'
 require_relative 'payload'
 require_relative 'logging'
+require_relative 'json'
 
 # Component worker thread class.
 #
@@ -284,7 +285,8 @@ class ComponentServer
 
                 # Process message reviced
                 commandResultPayload = process_payload(received_action, commandPayload)
-                Loggging.log.debug "Responser commandResultPayload: [#{commandResultPayload}]"
+                Loggging.log.debug "Response commandResultPayload: [#{commandResultPayload}]"
+                Loggging.log.debug "Response commandResultPayload 'json': [#{commandResultPayload.to_json}]"
 
                 # send type of response
                 meta = ZMQ::Message.new
@@ -292,7 +294,7 @@ class ComponentServer
                 Loggging.log.debug "Responser meta: [#{meta}]"            
                 #receiver.sendmsg(meta,ZMQ::SNDMORE)
 
-                # Send reply back to client
+                # Send reply back to client                
                 crmsg = ZMQ::Message.new(commandResultPayload.to_msgpack)
                 #receiver.sendmsg(crmsg)
 
@@ -300,7 +302,8 @@ class ComponentServer
             end
 
             # Send reply back to client
-            Loggging.log.debug "Response data 'action' : [#{received_action}]: [#{response_data}]"
+            Loggging.log.debug "Response data 'action' : [#{received_action}]]"
+            Loggging.log.debug "Response data 'bytes' : [#{response_data[1].copy_out_string}]"
             #receiver.sendmsgs(response_data)
             receiver.sendmsg(response_data[0],ZMQ::SNDMORE)
             receiver.sendmsg(response_data[1])
