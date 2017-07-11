@@ -24,7 +24,7 @@ end
 #
 class Api
 	
-	def initialize(component, path, name, version, framework_version, variables=nil, compact_names=false, debug=false)
+	def initialize(component, path, name, version, framework_version, variables={}, compact_names=false, debug=false)
 		@component = component
 		@path = path
 		@name = name

@@ -92,7 +92,7 @@ class Param
 		NAME_CLASS_HASH => TYPE_OBJECT,
 	}
 
-	def initialize(name, value="", type=TYPE_STRING, exists=false)		
+	def initialize(name, value="", type=TYPE_STRING, exists=false)
 		@name = name
 		@value = value
 		@type = type || resolve_type(value) 

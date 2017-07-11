@@ -403,14 +403,15 @@ class TransportPayload < Payload
 	def initialize
 		super
 		@name = "transport"
-		deep_nest(@name,"body", {})
-        deep_nest(@name,"files", {})
-        deep_nest(@name,"data", {})
-        deep_nest(@name,"relations", {})
-        deep_nest(@name,"links", {})
-        deep_nest(@name,"calls", {})
-        deep_nest(@name,"transactions", {})
-        deep_nest(@name,"errors", {})
+		# Set defaul values
+		# deep_nest(@name,"body", {})
+        # deep_nest(@name,"files", {})
+        # deep_nest(@name,"data", {})
+        # deep_nest(@name,"relations", {})
+        # deep_nest(@name,"links", {})
+        # deep_nest(@name,"calls", {})
+        # deep_nest(@name,"transactions", {})
+        # deep_nest(@name,"errors", {})
 	end
 
 	def init(version, request_id, origin=nil, date_time=nil, *agrs)

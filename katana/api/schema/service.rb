@@ -43,6 +43,14 @@ class ServiceSchema
         return @version
     end
 
+    # Check if service has a file server.
+    #
+    # :rtype: bool
+    #
+    def has_file_server
+        return @payload.get_path("files"){false}
+    end
+
     
     # Get Service action names.
     #
@@ -76,8 +84,9 @@ class ServiceSchema
         if !self.has_action(name)
             error = "Cannot resolve schema for action: #{name}"
             raise ServiceSchemaError.new error
+        end
 
-        return ActionSchema.new (name, @actions[name])
+        return ActionSchema.new(name, @actions[name])
     end
 
     
